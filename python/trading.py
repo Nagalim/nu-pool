@@ -96,12 +96,13 @@ class NuBot(ConnectionThread):
 
 
 class PyBot(ConnectionThread):
-    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False):
+    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False, prefunit='none'):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
         self.key = key
         self.secret = secret
+        self.prefunit = prefunit
         self.exchange = exchange
         self.unit = unit
         self.orders = []
@@ -202,10 +203,17 @@ class PyBot(ConnectionThread):
             self.logger.error('unable to retrieve order book for %s on %s: %s', self.unit, repr(self.exchange),
                               response['error'])
         else:
-            spread = max(self.exchange.fee, 0.002)
-            bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(
-                10 ** 8)  # truncate floating point precision after 8th position
-            askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
+            spread = max(self.exchange.fee, 0.005)
+            if self.prefunit == 'nbt':
+                bidprice = ceil(self.price * (1.0 - spread + .002) * 10 ** 8) / float(
+                    10 ** 8)  # truncate floating point precision after 8th position
+                askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
+            elif self.prefunit == 'btc':
+                bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(10 ** 8)
+                askprice = ceil(self.price * (1.0 + spread - .002) * 10 ** 8) / float(10 ** 8)
+            else:
+                bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(10 ** 8)
+                askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
             if response['ask'] == None or response['ask'] > bidprice:
                 self.place('bid', bidprice)
             else:
