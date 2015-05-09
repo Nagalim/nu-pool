@@ -203,14 +203,14 @@ class PyBot(ConnectionThread):
             self.logger.error('unable to retrieve order book for %s on %s: %s', self.unit, repr(self.exchange),
                               response['error'])
         else:
-            spread = max(self.exchange.fee, 0.0085)
+            spread = max(self.exchange.fee, 0.007)
             if self.prefunit == 'nbt':
-                bidprice = ceil(self.price * (1.0 - spread + .0035) * 10 ** 8) / float(
+                bidprice = ceil(self.price * (1.0 - spread + .002) * 10 ** 8) / float(
                     10 ** 8)  # truncate floating point precision after 8th position
                 askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
             elif self.prefunit == 'btc':
                 bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(10 ** 8)
-                askprice = ceil(self.price * (1.0 + spread - .0035) * 10 ** 8) / float(10 ** 8)
+                askprice = ceil(self.price * (1.0 + spread - .002) * 10 ** 8) / float(10 ** 8)
             else:
                 bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(10 ** 8)
                 askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
@@ -326,7 +326,7 @@ class PyBot(ConnectionThread):
                             efftime = curtime
                         else:
                             deviation = 1.0 - min(self.price, self.serverprice) / max(self.price, self.serverprice)
-                            if deviation > 0.0025:
+                            if deviation > 0.0015:
                                 self.logger.info('price of %s moved from %.8f to %.8f, will try to delete orders on %s',
                                                  self.unit, self.price, self.serverprice, repr(self.exchange))
                                 self.price = self.serverprice
