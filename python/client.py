@@ -39,7 +39,8 @@ from exchanges import *
 from trading import *
 from utils import *
 
-_wrappers = {'bittrex': Bittrex, 'ccedk': CCEDK, 'bitcoincoid': BitcoinCoId, 'bter': BTER, 'testing': Peatio}
+_wrappers = {'bittrex': Bittrex, 'poloniex': Poloniex, 'ccedk': CCEDK, 'bitcoincoid': BitcoinCoId, 'bter': BTER,
+             'testing': Peatio}
 _mainlogger = None
 
 
@@ -126,7 +127,7 @@ class Client(ConnectionThread):
         self.users = {}
         self.lock = threading.Lock()
 
-    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=False):
+    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True):
         if not name in self.exchangeinfo or not unit in self.exchangeinfo[name]:
             return False
         key = str(key)
@@ -297,7 +298,7 @@ class Client(ConnectionThread):
                 self.logger.error('exception caught in main loop: %s', sys.exc_info()[1])
             self.lock.release()
         self.lock.acquire()
-        logger.info('stopping trading bots, please allow the client up to 1 minute to terminate')
+        self.logger.info('stopping trading bots, please allow the client up to 1 minute to terminate')
         self.shutdown()
         self.lock.release()
 
@@ -313,7 +314,7 @@ if __name__ == "__main__":
         try:
             userdata = [line.strip().split('#')[0].split() for line in open(userfile).readlines() if
                         len(line.strip().split('#')[0].split()) >= 5]
-            if len(userdata) != 0:  # try to interpret data as list of address unit exchange key secret  bid ask bot
+            if len(userdata) != 0:  # try to interpret data as list of address unit exchange key secret bid ask bot
                 if len(sys.argv) == 1:
                     logger.error(
                         'multi-key format in %s requires pool IP to be specified as second parameter to the client',
@@ -336,7 +337,7 @@ if __name__ == "__main__":
                         if len(user) >= 7 and float(user[6]) != 0.0:
                             ask = float(user[6]) / 100.0
                         bot = 'pybot' if len(user) < 8 else user[7]
-                        ordermatch = False if len(user) < 9 else (user[8] == 'match')
+                        ordermatch = True if len(user) < 9 else (user[8] == 'match')
                         if not client.set(key, secret, user[0], name, unit, bid, ask, bot):
                             logger.error("%s on %s not supported by pool", unit, name)
                             sys.exit(1)
@@ -354,8 +355,8 @@ if __name__ == "__main__":
                         bid = None
                         ask = None
                     bot = 'pybot' if not 'trading' in configdata else configdata['trading']
-                    ordermatch = False if not 'ordermatch' in configdata else (
-                        configdata['ordermatch'] in ['True', 'true', '1'])
+                    ordermatch = True if not 'ordermatch' in configdata else (
+                        configdata['ordermatch'] in ['False', 'false', '0'])
                     if 'server' in configdata:
                         if 'apikey' in configdata:
                             if 'apisecret' in configdata:

@@ -142,7 +142,7 @@ class CheckpointThread(ConnectionThread):
 class PriceFeed():
   def __init__(self, update_interval, logger):
     self.update_interval = update_interval
-    self.feed = { x : [0, threading.Lock(), 0.0] for x in [ 'btc', 'eur' ] }
+    self.feed = { x : [0, threading.Lock(), 0.0] for x in [ 'btc', 'eur', 'cny' ] }
     self.logger = logger if logger else logging.getLogger('null')
 
   def price(self, unit, force = False):
@@ -182,5 +182,18 @@ class PriceFeed():
             self.feed['eur'][2] = 2.0 / (float(ret['sell']) + float(ret['buy']))
           except:
             self.logger.error("unable to update price for EUR")
+      elif unit == 'cny':
+        try: # yahoo
+          ret = json.loads(urllib2.urlopen(urllib2.Request('http://finance.yahoo.com/webservice/v1/symbols/allcurrencies/quote?format=json'), timeout = 3).read())
+          for res in ret['list']['resources']:
+            if res['resource']['fields']['name'] == 'USD/CNY':
+              self.feed['cny'][2] = float(res['resource']['fields']['price'])
+        except:
+          self.logger.warning("unable to update CNY price from yahoo")
+          try: # coindesk
+            ret = json.loads(urllib2.urlopen(urllib2.Request('https://api.coindesk.com/v1/bpi/currentprice/CNY.json'), timeout = 3).read())
+            self.feed['cny'][2] = ret['bpi']['CNY']['rate'] / ret['bpi']['USD']['rate']
+          except:
+            self.logger.error("unable to update price for CNY")
     self.feed[unit][1].release()
     return self.feed[unit][2]

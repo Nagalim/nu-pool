@@ -29,6 +29,7 @@ import cgi
 import os
 from math import ceil
 from thread import start_new_thread
+from logging.handlers import TimedRotatingFileHandler
 
 from exchanges import *
 from utils import *
@@ -62,12 +63,12 @@ logname = str(int(time.time() * 100))
 creditor = logging.getLogger("credits")
 creditor.propagate = False
 creditformat = logging.Formatter(fmt='%(asctime)s: %(message)s', datefmt="%Y/%m/%d-%H:%M:%S")
-ch = logging.FileHandler('logs/%s.credits' % logname)
+ch = TimedRotatingFileHandler('logs/%s.credits' % logname, when='midnight')
 ch.setFormatter(creditformat)
 creditor.addHandler(ch)
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
-fh = logging.FileHandler('logs/%s.log' % logname)
+fh = TimedRotatingFileHandler('logs/%s.log' % logname, when='midnight')
 fh.setLevel(logging.DEBUG)
 sh = logging.StreamHandler()
 sh.setLevel(logging.INFO)

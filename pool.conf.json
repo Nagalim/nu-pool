@@ -1,0 +1,26 @@
+[
+  {
+    "server" : "eu.nupool.net",
+    "exchange": "bittrex",
+    "unit": "btc",
+    "address": "xxx",
+    "api_key": "xxx",
+    "api_secret": "xxx",
+    "bid_interest": 0.001,
+    "ask_interest": 0.001,
+    "bot": "pybot",
+    "order_match": true
+  },
+  {
+    "server" : "eu.nupool.net",
+    "exchange": "poloniex",
+    "unit": "btc",
+    "address": "xxx",
+    "api_key": "xxx",
+    "api_secret": "xxx",
+    "bid_interest": 0.001,
+    "ask_interest": 0.001,
+    "bot": "pybot",
+    "order_match": true
+  }
+]
