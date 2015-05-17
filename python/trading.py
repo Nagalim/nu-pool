@@ -318,7 +318,7 @@ class PyBot(ConnectionThread):
                             efftime = curtime
                         else:
                             deviation = 1.0 - min(self.price, self.serverprice) / max(self.price, self.serverprice)
-                            if deviation > 0.0025:
+                            if deviation > 0.0005:
                                 self.logger.info('price of %s moved from %.8f to %.8f, will try to delete orders on %s',
                                                  self.unit, self.price, self.serverprice, repr(self.exchange))
                                 self.price = self.serverprice
