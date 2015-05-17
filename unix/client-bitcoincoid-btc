@@ -6,8 +6,8 @@ config=`mktemp`
 options=`getopt -o x:a:k:s:i:ou:e:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,trading: -- "$@"`
 eval set -- "$options"
 
-if [ -e poolLB.conf ];then
-  cp poolLB.conf $config
+if [ -e pool-bitcoincoid-btc ];then
+  cp pool-bitcoincoid-btc $config
 fi
 
 while [ $# -gt 0 ]; do
@@ -18,7 +18,7 @@ while [ $# -gt 0 ]; do
   -k|--key) echo "apikey=$2";shift;;
   -s|--secret) echo "apisecret=$2";shift;;
   -i|--interest) echo "interest=$2";shift;;
-  -o|--ordermatch) echo "ordermatch=True";;
+  -o|--ordermatch) echo "ordermatch=True";shift;;
   -u|--unit) echo "unit=$2";shift;;
   -e|--exchange) echo "exchange=$2";shift;;
   (--) shift; break;;
