@@ -304,33 +304,20 @@ class CCEDK(Exchange):
         self.pair_id = {}
         self.currency_id = {}
         failed = False
-        import logging
-        self.logger = logging.getLogger('CCEDK')
-        self.logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler('logs/%s_%d.log' % ('CCEDK', time.time()))
-        fh.setLevel(logging.DEBUG)
-        fh_formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s %(threadName)s %(funcName)s: %(message)s',
-                                         datefmt="%Y/%m/%d-%H:%M:%S")
-        fh.setFormatter(fh_formatter)
-        self.logger.addHandler(fh)
         while not self.pair_id or not self.currency_id:
             try:
                 response = None
                 if not self.pair_id:
                     url = 'https://www.ccedk.com/api/v1/stats/marketdepthfull'
                     response = json.loads(urllib2.urlopen(urllib2.Request(url), timeout=15).read())
-                    self.logger.info("url: %s" % url)
-                    self.logger.info("response: %s" % str(response))
                     for unit in response['response']['entities']:
-                        if unit['pair_name'][:4] == 'nbt/':
+                        if unit['pair_name'][:4] == 'NBT/':
                             self.pair_id[unit['pair_name'][4:]] = unit['pair_id']
                 if not self.currency_id:
                     url = 'https://www.ccedk.com/api/v1/currency/list'
                     response = json.loads(urllib2.urlopen(urllib2.Request(url), timeout=15).read())
-                    self.logger.info("url: %s" % url)
-                    self.logger.info("response: %s" % str(response))
                     for unit in response['response']['entities']:
-                        self.currency_id[unit['iso'].lower()] = unit['currency_id']
+                        self.currency_id[unit['iso'].upper()] = unit['currency_id']
             except Exception as e:
                 if response and not response['response']:
                     self.adjust(",".join(response['errors'].values()))
@@ -350,7 +337,6 @@ class CCEDK(Exchange):
         if n == self._nonce:
             n = self._nonce + 1
         self._nonce = n
-        self.logger.info("nonce: %s" % str(self._nonce))
         return n
 
     def adjust(self, error):
@@ -376,7 +362,6 @@ class CCEDK(Exchange):
                     self._shift += random.randrange(-10, 10)
         else:
             self._shift += random.randrange(-10, 10)
-        self.logger.info("_shift: %s" % str(self._shift))
 
     def post(self, method, params, key, secret):
         request = {'nonce': self.nonce()}  # TODO: check for unique nonce
@@ -386,8 +371,6 @@ class CCEDK(Exchange):
         headers = {"Content-type": "application/x-www-form-urlencoded", "Key": key, "Sign": sign}
         url = 'https://www.ccedk.com/api/v1/' + method
         response = json.loads(urllib2.urlopen(urllib2.Request(url, data, headers), timeout=15).read())
-        self.logger.info("url: %s" % url)
-        self.logger.info("response: %s" % str(response))
         if response['errors'] is True:
             response['error'] = ",".join(response['errors'].values())
         return response
@@ -397,11 +380,10 @@ class CCEDK(Exchange):
         if not response['response'] or not response['response']['entities']:
             return response
         for order in response['response']['entities']:
-            self.logger.info("order: %s" % str(order))
             if side == 'all' \
                     or (side == 'bid' and order['type'] == 'buy') \
                     or (side == 'ask' and order['type'] == 'sell'):
-                if order['pair_id'] == self.pair_id[unit.lower()]:
+                if order['pair_id'] == self.pair_id[unit.upper()]:
                     ret = self.post('order/cancel', {'order_id': order['order_id']}, key, secret)
                     if ret['errors'] is True:
                         if 'error' not in response:
@@ -412,31 +394,27 @@ class CCEDK(Exchange):
     def place_order(self, unit, side, key, secret, amount, price):
         params = {"type": 'buy' if side == 'bid' else 'sell',
                   "price": price,
-                  "pair_id": int(self.pair_id[unit.lower()]),
+                  "pair_id": int(self.pair_id[unit.upper()]),
                   "amount": amount}
         response = self.post('order/new', params, key, secret)
         if response['errors'] is True:
             response['error'] = ",".join(response['errors'].values())
         else:
             response['id'] = int(response['response']['entity']['order_id'])
-        self.logger.info("response: %s" % str(response))
         return response
 
     def get_balance(self, unit, key, secret):
-        params = {"currency_id": self.currency_id[unit.lower()]}
+        params = {"currency_id": self.currency_id[unit.upper()]}
         response = self.post('balance/info', params, key, secret)
         if response['errors'] is True:
             response['error'] = ",".join(response['errors'].values())
         else:
             response['balance'] = float(response['response']['entity']['balance'])
-        self.logger.info("response: %s" % str(response))
         return response
 
     def get_price(self, unit):
-        url = 'https://www.ccedk.com/api/v1/orderbook/info?' + urllib.urlencode({'pair_id': self.pair_id[unit.lower()]})
+        url = 'https://www.ccedk.com/api/v1/orderbook/info?' + urllib.urlencode({'pair_id': self.pair_id[unit.upper()]})
         response = json.loads(urllib2.urlopen(urllib2.Request(url), timeout=5).read())
-        self.logger.info("url: %s" % url)
-        self.logger.info("response: %s" % str(response))
         if response['errors'] is True:
             response['error'] = ",".join(response['errors'].values())
             return response
@@ -445,7 +423,6 @@ class CCEDK(Exchange):
             response['bid'] = float(response['response']['entities']['bids'][0]['price'])
         if response['response']['entities']['asks']:
             response['ask'] = float(response['response']['entities']['asks'][0]['price'])
-        self.logger.info("response: %s" % str(response))
         return response
 
     def create_request(self, unit, key=None, secret=None):
@@ -454,16 +431,12 @@ class CCEDK(Exchange):
         request = {'nonce': self.nonce()}
         data = urllib.urlencode(request)
         sign = hmac.new(secret, data, hashlib.sha512).hexdigest()
-        self.logger.info("request: %s" % str(request))
-        self.logger.info("sign: %s" % str(sign))
         return request, sign
 
     def validate_request(self, key, unit, data, sign):
         headers = {"Content-type": "application/x-www-form-urlencoded", "Key": key, "Sign": sign}
         url = 'https://www.ccedk.com/api/v1/order/list'
         response = json.loads(urllib2.urlopen(urllib2.Request(url, urllib.urlencode(data), headers), timeout=5).read())
-        self.logger.info("url: %s" % url)
-        self.logger.info("response: %s" % str(response))
         if response['errors'] is True:
             response['error'] = ",".join(response['errors'].values())
             return response
@@ -474,8 +447,7 @@ class CCEDK(Exchange):
                       'price': float(order['price']),
                       'type': 'ask' if order['type'] == 'sell' else 'bid',
                       'amount': float(order['volume']),
-                      } for order in response['response']['entities'] if order['pair_id'] == self.pair_id[unit.lower()]]
-        self.logger.info("validation: %s" % str(validation))
+                      } for order in response['response']['entities'] if order['pair_id'] == self.pair_id[unit.upper()]]
         return validation
 
 

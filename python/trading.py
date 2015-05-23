@@ -267,8 +267,9 @@ class PyBot(ConnectionThread):
         trials = 0
         while trials < 10:
             response = self.cancel_orders(reset=False)
-            if not 'error' in response: break
-            trials = trials + 1
+            if 'error' not in response:
+                break
+            trials += 1
         self.sync()
         self.place_orders()
         curtime = time.time()
@@ -293,9 +294,11 @@ class PyBot(ConnectionThread):
                     while sleep > 0:
                         step = min(sleep, 0.5)
                         time.sleep(step)
-                        if not self.active: break
+                        if not self.active:
+                            break
                         sleep -= step
-                if not self.active: break
+                if not self.active:
+                    break
                 curtime = time.time()
                 lasttime = curtime
                 if self.requester.errorflag:
