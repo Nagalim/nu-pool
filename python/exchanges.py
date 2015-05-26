@@ -311,13 +311,13 @@ class CCEDK(Exchange):
                     url = 'https://www.ccedk.com/api/v1/stats/marketdepthfull'
                     response = json.loads(urllib2.urlopen(urllib2.Request(url), timeout=15).read())
                     for unit in response['response']['entities']:
-                        if unit['pair_name'][:4] == 'NBT/':
+                        if unit['pair_name'][:4] == 'nbt/':
                             self.pair_id[unit['pair_name'][4:]] = unit['pair_id']
                 if not self.currency_id:
                     url = 'https://www.ccedk.com/api/v1/currency/list'
                     response = json.loads(urllib2.urlopen(urllib2.Request(url), timeout=15).read())
                     for unit in response['response']['entities']:
-                        self.currency_id[unit['iso'].upper()] = unit['currency_id']
+                        self.currency_id[unit['iso'].lower()] = unit['currency_id']
             except Exception as e:
                 if response and not response['response']:
                     self.adjust(",".join(response['errors'].values()))
@@ -383,7 +383,7 @@ class CCEDK(Exchange):
             if side == 'all' \
                     or (side == 'bid' and order['type'] == 'buy') \
                     or (side == 'ask' and order['type'] == 'sell'):
-                if order['pair_id'] == self.pair_id[unit.upper()]:
+                if order['pair_id'] == self.pair_id[unit.lower()]:
                     ret = self.post('order/cancel', {'order_id': order['order_id']}, key, secret)
                     if ret['errors'] is True:
                         if 'error' not in response:
@@ -394,7 +394,7 @@ class CCEDK(Exchange):
     def place_order(self, unit, side, key, secret, amount, price):
         params = {"type": 'buy' if side == 'bid' else 'sell',
                   "price": price,
-                  "pair_id": int(self.pair_id[unit.upper()]),
+                  "pair_id": int(self.pair_id[unit.lower()]),
                   "amount": amount}
         response = self.post('order/new', params, key, secret)
         if response['errors'] is True:
@@ -404,7 +404,7 @@ class CCEDK(Exchange):
         return response
 
     def get_balance(self, unit, key, secret):
-        params = {"currency_id": self.currency_id[unit.upper()]}
+        params = {"currency_id": self.currency_id[unit.lower()]}
         response = self.post('balance/info', params, key, secret)
         if response['errors'] is True:
             response['error'] = ",".join(response['errors'].values())
@@ -413,7 +413,7 @@ class CCEDK(Exchange):
         return response
 
     def get_price(self, unit):
-        url = 'https://www.ccedk.com/api/v1/orderbook/info?' + urllib.urlencode({'pair_id': self.pair_id[unit.upper()]})
+        url = 'https://www.ccedk.com/api/v1/orderbook/info?' + urllib.urlencode({'pair_id': self.pair_id[unit.lower()]})
         response = json.loads(urllib2.urlopen(urllib2.Request(url), timeout=5).read())
         if response['errors'] is True:
             response['error'] = ",".join(response['errors'].values())
@@ -447,7 +447,7 @@ class CCEDK(Exchange):
                       'price': float(order['price']),
                       'type': 'ask' if order['type'] == 'sell' else 'bid',
                       'amount': float(order['volume']),
-                      } for order in response['response']['entities'] if order['pair_id'] == self.pair_id[unit.upper()]]
+                      } for order in response['response']['entities'] if order['pair_id'] == self.pair_id[unit.lower()]]
         return validation
 
 
