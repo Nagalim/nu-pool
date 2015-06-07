@@ -1,5 +1,7 @@
 ## Trustless Liquidity Pool ##
 
+[![Join the chat at https://gitter.im/inuitwallet/nu-pool](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inuitwallet/nu-pool?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 In a nutshell: You run a program that places NBT and BTC orders on an exchange at 1 USD with a very small spread. The program will send proofs of those orders to a server which in turn pays you interest in the form of NuBits.
 
 
