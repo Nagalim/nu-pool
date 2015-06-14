@@ -97,7 +97,7 @@ class NuBot(ConnectionThread):
 
 
 class PyBot(ConnectionThread):
-    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False, deviation=0.0025):
+    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False, deviation=0.0025, offset=0.002):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
@@ -110,7 +110,8 @@ class PyBot(ConnectionThread):
         self.total = target.copy()
         self.limit = target.copy()
         self.lastlimit = {'bid': 0, 'ask': 0}
-        self.deviation = deviation
+        self.deviation = float(deviation)
+        self.offset = float(offset)
         if not hasattr(PyBot, 'lock'):
             PyBot.lock = {}
         if not repr(exchange) in PyBot.lock:
@@ -204,7 +205,7 @@ class PyBot(ConnectionThread):
             self.logger.error('unable to retrieve order book for %s on %s: %s', self.unit, repr(self.exchange),
                               response['error'])
         else:
-            spread = max(self.exchange.fee, 0.002)
+            spread = max(self.exchange.fee, self.offset)
             bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(
                 10 ** 8)  # truncate floating point precision after 8th position
             askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
