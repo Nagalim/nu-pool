@@ -38,13 +38,14 @@ from utils import *
 
 
 class NuBot(ConnectionThread):
-    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False):
+    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False, deviation=0.0025):
         super(NuBot, self).__init__(conn, logger)
         self.requester = requester
         self.process = None
         self.unit = unit
         self.running = False
         self.exchange = exchange
+        self.deviation = deviation
         self.options = {
             'exchangename': repr(exchange),
             'apikey': key,
@@ -96,7 +97,7 @@ class NuBot(ConnectionThread):
 
 
 class PyBot(ConnectionThread):
-    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False):
+    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False, deviation=0.0025):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
@@ -109,6 +110,7 @@ class PyBot(ConnectionThread):
         self.total = target.copy()
         self.limit = target.copy()
         self.lastlimit = {'bid': 0, 'ask': 0}
+        self.deviation = deviation
         if not hasattr(PyBot, 'lock'):
             PyBot.lock = {}
         if not repr(exchange) in PyBot.lock:
@@ -267,8 +269,9 @@ class PyBot(ConnectionThread):
         trials = 0
         while trials < 10:
             response = self.cancel_orders(reset=False)
-            if not 'error' in response: break
-            trials = trials + 1
+            if 'error' not in response:
+                break
+            trials += 1
         self.sync()
         self.place_orders()
         curtime = time.time()
@@ -293,9 +296,11 @@ class PyBot(ConnectionThread):
                     while sleep > 0:
                         step = min(sleep, 0.5)
                         time.sleep(step)
-                        if not self.active: break
+                        if not self.active:
+                            break
                         sleep -= step
-                if not self.active: break
+                if not self.active:
+                    break
                 curtime = time.time()
                 lasttime = curtime
                 if self.requester.errorflag:
@@ -318,7 +323,7 @@ class PyBot(ConnectionThread):
                             efftime = curtime
                         else:
                             deviation = 1.0 - min(self.price, self.serverprice) / max(self.price, self.serverprice)
-                            if deviation > 0.0025:
+                            if deviation > self.deviation:
                                 self.logger.info('price of %s moved from %.8f to %.8f, will try to delete orders on %s',
                                                  self.unit, self.price, self.serverprice, repr(self.exchange))
                                 self.price = self.serverprice
@@ -350,30 +355,34 @@ class PyBot(ConnectionThread):
                                             deviation = 1.0 - min(effective_rate, self.requester.cost[side]) / max(
                                                 effective_rate, self.requester.cost[side])
                                             if deviation > 0.02 and lastdev[side] > 0.02:
-                                                if self.total[side] > 0.5 and effective_rate < self.requester.cost[
-                                                    side]:
+                                                if self.total[side] > 0.5 \
+                                                        and effective_rate < self.requester.cost[side]:
                                                     funds = max(0.5, self.total[side] * (1.0 - max(deviation, 0.1)))
                                                     self.logger.info(
                                                         "decreasing tier 1 %s limit of %s on %s from %.8f to %.8f",
                                                         side, self.unit, repr(self.exchange), self.total[side], funds)
                                                     self.cancel_orders(side)
                                                     self.limit[side] = funds
-                                                elif self.limit[side] < self.total[
-                                                    side] * deviation and effective_rate > self.requester.cost[
-                                                    side] and contrib < self.target[side]:
+                                                elif self.limit[side] < self.total[side] * deviation \
+                                                        and effective_rate > self.requester.cost[side] \
+                                                        and contrib < self.target[side]:
                                                     self.logger.info(
                                                         "increasing tier 1 %s limit of %s on %s from %.8f to %.8f",
                                                         side, self.unit, repr(self.exchange), self.total[side],
                                                         self.total[side] + max(1.0, max(contrib * deviation, 0.5)))
                                                     self.limit[side] = max(1.0, max(contrib * deviation, 0.5))
-                                            elif deviation < 0.01 and lastdev[side] < 0.01 and self.limit[side] < max(
-                                                    1.0, max(contrib * deviation, 0.5)) and contrib < self.target[
-                                                side] and effective_rate >= self.requester.cost[side]:
+                                                    self.cancel_orders(side)
+                                            elif 0 < deviation < 0.01 \
+                                                    and lastdev[side] < 0.01 \
+                                                    and self.limit[side] < max(1.0, max(contrib * deviation, 0.5)) \
+                                                    and contrib < self.target[side] \
+                                                    and effective_rate >= self.requester.cost[side]:
+                                                self.limit[side] = max(1.0, max(contrib * deviation, 0.5))
                                                 self.logger.info(
                                                     "increasing tier 1 %s limit of %s on %s from %.8f to %.8f",
                                                     side, self.unit, repr(self.exchange), self.total[side],
-                                                    self.total[side] + max(1.0, max(contrib * deviation, 0.5)))
-                                                self.limit[side] = max(1.0, max(contrib * deviation, 0.5))
+                                                    self.total[side] + self.limit[side])
+                                                self.cancel_orders(side)
                                             lastdev[side] = deviation
                             self.place_orders()
                     else:

@@ -442,12 +442,13 @@ class CCEDK(Exchange):
             return response
         if not response['response']['entities']:
             response['response']['entities'] = []
-        return [{
-                'id': int(order['order_id']),
-                'price': float(order['price']),
-                'type': 'ask' if order['type'] == 'sell' else 'bid',
-                'amount': float(order['volume']),
-                } for order in response['response']['entities'] if order['pair_id'] == self.pair_id[unit.lower()]]
+        validation = [{
+                      'id': int(order['order_id']),
+                      'price': float(order['price']),
+                      'type': 'ask' if order['type'] == 'sell' else 'bid',
+                      'amount': float(order['volume']),
+                      } for order in response['response']['entities'] if order['pair_id'] == self.pair_id[unit.lower()]]
+        return validation
 
 
 class BitcoinCoId(Exchange):
