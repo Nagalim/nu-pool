@@ -49,7 +49,7 @@ ordermatch = False
 
 # Determines window of allowed price deviation
 
-deviation = 0.003
+deviation = 0.0029
 
 # Determines market spread
 
