@@ -127,7 +127,7 @@ class Client(ConnectionThread):
         self.users = {}
         self.lock = threading.Lock()
 
-    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True):
+    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True, deviation=0.0025, offset=0.002):
         if not name in self.exchangeinfo or not unit in self.exchangeinfo[name]:
             return False
         key = str(key)
@@ -154,7 +154,7 @@ class Client(ConnectionThread):
                                                    unit, target, self.logger, ordermatch)
         elif bot == 'pybot':
             self.users[key][unit]['order'] = PyBot(self.conn, self.users[key][unit]['request'], key, secret, exchange,
-                                                   unit, target, self.logger, ordermatch)
+                                                   unit, target, self.logger, ordermatch, deviation, offset)
         else:
             self.logger.error("unknown order handler: %s", bot)
             self.users[key][unit]['order'] = None
@@ -366,7 +366,23 @@ if __name__ == "__main__":
                                             name = configdata['exchange'].lower()
                                             if name in _wrappers:
                                                 client = Client(configdata['server'], logger)
-                                                client.set(configdata['apikey'], configdata['apisecret'],
+                                                if 'deviation' in configdata:
+                                                    if 'offset' in configdata:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                           configdata['address'], name, configdata['unit'].lower(), bid,
+                                                           ask, bot, ordermatch,
+                                                           deviation=configdata['deviation'],offset=configdata['offset'])
+                                                    else:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                           configdata['address'], name, configdata['unit'].lower(), bid,
+                                                           ask, bot, ordermatch, deviation=configdata['deviation'])
+                                                else:
+                                                    if 'offset' in configdata:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                           configdata['address'], name, configdata['unit'].lower(), bid,
+                                                           ask, bot, ordermatch, offset=configdata['offset'])
+                                                    else:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
                                                            configdata['address'], name, configdata['unit'].lower(), bid,
                                                            ask, bot, ordermatch)
                                             else:
