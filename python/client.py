@@ -127,7 +127,7 @@ class Client(ConnectionThread):
         self.users = {}
         self.lock = threading.Lock()
 
-    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True, deviation=0.0025, offset=0.002, restime=0.25):
+    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True, deviation=0.0025, offset=0.002, restime=24):
         if not name in self.exchangeinfo or not unit in self.exchangeinfo[name]:
             return False
         key = str(key)
