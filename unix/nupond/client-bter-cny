@@ -3,7 +3,7 @@
 client=../python/client.py
 
 config=`mktemp`
-options=`getopt -o x:a:k:s:i:ou:e:d:f:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,trading: -- "$@"`
+options=`getopt -o x:a:k:s:i:ou:e:d:f:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,restime:,trading: -- "$@"`
 eval set -- "$options"
 
 if [ -e pool-bter-cny ];then
@@ -23,6 +23,7 @@ while [ $# -gt 0 ]; do
   -e|--exchange) echo "exchange=$2";shift;;
   -d|--deviation) echo "deviation=$2";shift;;
   -f|--offset) echo "deviation=$2";shift;;
+  -r|--restime) echo "restime=$2";shift;;
   (--) shift; break;;
   (-*) break;;
   (*) break;;
