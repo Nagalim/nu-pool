@@ -11,4 +11,4 @@ if not exist pool-ccedk-usd.conf (
   )
 )
 @echo on
-..\python\client.py %users%
+..\..\python\client.py %users%
