@@ -97,7 +97,7 @@ class NuBot(ConnectionThread):
 
 
 class PyBot(ConnectionThread):
-    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False, deviation=0.0025, offset=0.002):
+    def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False, deviation=0.0025, offset=0.002, restime=24):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
@@ -112,6 +112,8 @@ class PyBot(ConnectionThread):
         self.lastlimit = {'bid': 0, 'ask': 0}
         self.deviation = float(deviation)
         self.offset = float(offset)
+        self.restime = float(restime)
+        self.startime = time.time()
         if not hasattr(PyBot, 'lock'):
             PyBot.lock = {}
         if not repr(exchange) in PyBot.lock:
@@ -281,6 +283,13 @@ class PyBot(ConnectionThread):
         lastdev = {'bid': 1.0, 'ask': 1.0}
         delay = 0.0
         while self.active:
+            try:
+                totime = time.time() - self.startime
+                if totime > (self.restime*3600):
+                    python = sys.executable
+                    os.execl(python, python, * sys.argv)
+            except:
+                print "issues restarting bot"
             try:
                 sleep = 30 - time.time() + curtime
                 if sleep < 0:
