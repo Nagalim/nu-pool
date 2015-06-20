@@ -368,20 +368,43 @@ if __name__ == "__main__":
                                                 client = Client(configdata['server'], logger)
                                                 if 'deviation' in configdata:
                                                     if 'offset' in configdata:
+                                                      if 'restime' in configdata:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                           configdata['address'], name, configdata['unit'].lower(), bid,
+                                                           ask, bot, ordermatch,deviation=configdata['deviation'],
+                                                           offset=configdata['offset'],restime=configdata['restime'])
+                                                      else:
                                                         client.set(configdata['apikey'], configdata['apisecret'],
                                                            configdata['address'], name, configdata['unit'].lower(), bid,
                                                            ask, bot, ordermatch,
                                                            deviation=configdata['deviation'],offset=configdata['offset'])
                                                     else:
+                                                      if 'restime' in configdata:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                           configdata['address'], name, configdata['unit'].lower(), bid,
+                                                           ask, bot, ordermatch, deviation=configdata['deviation'],
+                                                           restime=configdata['restime'])
+                                                      else:
                                                         client.set(configdata['apikey'], configdata['apisecret'],
                                                            configdata['address'], name, configdata['unit'].lower(), bid,
                                                            ask, bot, ordermatch, deviation=configdata['deviation'])
                                                 else:
                                                     if 'offset' in configdata:
+                                                      if 'restime' in configdata:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                           configdata['address'], name, configdata['unit'].lower(), bid,
+                                                           ask, bot, ordermatch, offset=configdata['offset'],
+                                                           restime=configdata['restime'])
+                                                      else:
                                                         client.set(configdata['apikey'], configdata['apisecret'],
                                                            configdata['address'], name, configdata['unit'].lower(), bid,
                                                            ask, bot, ordermatch, offset=configdata['offset'])
                                                     else:
+                                                      if 'restime' in configdata:
+                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                           configdata['address'], name, configdata['unit'].lower(), bid,
+                                                           ask, bot, ordermatch, restime=configdata['restime'])
+                                                      else:
                                                         client.set(configdata['apikey'], configdata['apisecret'],
                                                            configdata['address'], name, configdata['unit'].lower(), bid,
                                                            ask, bot, ordermatch)
