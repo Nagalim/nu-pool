@@ -35,7 +35,7 @@ ordermatch = True
 deviation = 0.0025
 
 # Determines market spread
-offset = 0.004
+offset = 0.0045
 
 # Sets time (in hours) between bot resets. [bug fixer]
 restime = 0.25

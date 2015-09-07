@@ -32,10 +32,10 @@ interest = 0
 ordermatch = True
 
 # Determines window of allowed price deviation
-deviation = 0.003
+deviation = 0.0025
 
 # Determines market spread
-offset = 0.005
+offset = 0.0045
 
 # Sets time (in hours) between bot resets. [bug fixer]
 restime = 0.25
