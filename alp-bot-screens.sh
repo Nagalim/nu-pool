@@ -1,5 +1,6 @@
 
 #!/bin/bash
+# version 0.20
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 
 # This is a nastily scripted, but hopefully helpful tool
