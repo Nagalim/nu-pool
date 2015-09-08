@@ -39,7 +39,7 @@ cwd=$(pwd) # <-- Do not edit this!
 # 	attached to with 'screen -r [name or process ID]'
 # 	detached (when being connected) with 'CTRL+a,CTRL+d'
 #
-# 'man screen' helps if 
+# 'man screen' helps if you get lost with 'screen' ;)
 #
 # In case a bot needs to be stopped (attach to screen, and terminate bot) 
 # the screen session dies with the bot.
