@@ -46,6 +46,6 @@ restime = 0.25
 
 ### GENERAL OPERATION PARAMETERS - DO NOT CHANGE ###
 
-server=tbd
+server=45.55.43.33:3334
 unit=btc
 exchange=cryptsy
