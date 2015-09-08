@@ -1,6 +1,12 @@
 
 #!/bin/bash
 # version 0.20
+# version 0.30 - changed names
+#       from    [pool]-[exchange]-[pair]
+#       to      [pool]_[exchange]_[pair]
+#
+#################################
+
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 
 # This is a nastily scripted, but hopefully helpful tool
@@ -15,34 +21,34 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 # on Debian based systems you can install screen with
 # 'sudo apt-get install screen'
 #
-# Don't forget to enter NBT address, API key and API secret in the 
+# Don't forget to enter NBT address, API key and API secret in the
 # 'unix/[poolname]/pool-[exchange]-[pair]' config file
 #
 #
 # Following are the paths to the different ALP bots
 # Uncomment each line which refers to an ALP bot you intend to use
 
-#liquidbitsCcedkBtc=$cwd/unix/liquidbits-ccedk-btc
-#liquidbitsCcedkEur=$cwd/unix/liquidbits-ccedk-eur
-#liquidbitsCcedkUsd=$cwd/unix/liquidbits-ccedk-usd
-#nupondBterBtc=$cwd/unix/nupond-bter-btc
-#nupondBterCny=$cwd/unix/nupond-bter-cny
-#nupoolBittrexBtc=$cwd/unix/nupool-bittrex-btc
-#nupoolPoloniexBtc=$cwd/unix/nupool-poloniex-btc
-#nuriverCryptsyBtc=$cwd/unix/nuriver-cryptsy-btc
-#nuriverCryptsyUsd=$cwd/unix/nuriver-cryptsy-usd
+#liquidbits_ccedk_btc=$cwd/unix/liquidbits_ccedk_btc
+#liquidbits_ccedk_eur=$cwd/unix/liquidbits_ccedk_eur
+#liquidbits_ccedk_usd=$cwd/unix/liquidbits_ccedk_usd
+#nupond_bter_btc=$cwd/unix/nupond_bter_btc
+#nupond_bter_cny=$cwd/unix/nupond_bter_cny
+#nupool_bittrex_btc=$cwd/unix/nupool_bittrex_btc
+#nupool_poloniex_btc=$cwd/unix/nupool_poloniex_btc
+#nuriver_cryptsy_btc=$cwd/unix/nuriver_cryptsy_btc
+#nuriver_cryptsy_usd=$cwd/unix/nuriver_cryptsy_usd
 
 
 # The next section deals with starting screen sesssions and running ALP bots within
 #
-# screen sessions can be 
+# screen sessions can be
 # 	listed with 'screen -ls'
 # 	attached to with 'screen -r [name or process ID]'
 # 	detached (when being connected) with 'CTRL+a,CTRL+d'
 #
 # 'man screen' helps if you get lost with 'screen' ;)
 #
-# In case a bot needs to be stopped (attach to screen, and terminate bot) 
+# In case a bot needs to be stopped (attach to screen, and terminate bot)
 # the screen session dies with the bot.
 #
 # This is not very convenient, but due to the automatic start of the bots with
@@ -56,7 +62,7 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 #
 ########## REMARK #######
 #
-# THE ORDERS PLACED BY THE BOTS REMAIN UNTIL THEY ARE REMOVED - EITHER 
+# THE ORDERS PLACED BY THE BOTS REMAIN UNTIL THEY ARE REMOVED - EITHER
 # MANUALLY ON THE EXCHANGE WEBSITE OR BY GRACEFULLY TERMINATING THE ALP BOT
 # FROM WITHIN THE SCREEN SESSION.
 # KILLING A SCREEN SESSION OR SHUTTING DOWN THE DEVICE THAT RUNS THE BOTS
@@ -65,23 +71,24 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 #########################
 #
 
-cd $liquidbitsCcedkBtc
-screen -dmS liquidbits-ccedk-btc ./client-ccedk-btc
-cd $liquidbitsCcedkEur
-screen -dmS liquidbits-ccedk-eur ./client-ccedk-eur
-cd $liquidbitsCcedkUsd
-screen -dmS liquidbits-ccedk-usd ./client-ccedk-usd
-cd $nupondBterBtc
-screen -dmS nupond-bter-btc ./client-bter-btc
-cd $nupondBterCny
-screen -dmS nupond-bter-cny ./client-bter-cny
-cd $nupoolBittrexBtc
-screen -dmS nupool-bittrex-btc  ./client-bittrex-btc
-cd $nupoolPoloniexBtc
-screen -dmS nupool-poloniex-btc ./client-poloniex-btc
-cd $nuriverCryptsyBtc
-screen -dmS nuriver-cryptsy-btc ./client-cryptsy-btc
-cd $nuriverCryptsyUsd
-screen -dmS nuriver-cryptsy-usd ./client-cryptsy-usd
+cd $liquidbits_ccedk_btc
+screen -dmS liquidbits_ccedk_btc ./client-ccedk-btc
+cd $liquidbits_ccedk_eur
+screen -dmS liquidbits_ccedk_eur ./client-ccedk-eur
+cd $liquidbits_ccedk_usd
+screen -dmS liquidbits_ccedk_usd ./client-ccedk-usd
+cd $nupond_bter_btc
+screen -dmS nupond_bter_btc ./client-bter-btc
+cd $nupond_bter_cny
+screen -dmS nupond_bter_cny ./client-bter-cny
+cd $nupool_bittrex_btc
+screen -dmS nupool_bittrex_btc  ./client-bittrex-btc
+cd $nupool_poloniex_btc
+screen -dmS nupool_poloniex_btc ./client-poloniex-btc
+cd $nuriver_cryptsy_btc
+screen -dmS nuriver_cryptsy_btc ./client-cryptsy-btc
+cd $nuriver_cryptsy_usd
+screen -dmS nuriver_cryptsy_usd ./client-cryptsy-usd
+
 sleep 2
 screen -ls
