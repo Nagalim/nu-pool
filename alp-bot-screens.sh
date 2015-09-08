@@ -1,6 +1,6 @@
 
 #!/bin/bash
-cwd=$(pwd) # <-- Do not edit this!
+cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 
 # This is a nastily scripted, but hopefully helpful tool
 # to run multiple ALP bots on a single machine.
