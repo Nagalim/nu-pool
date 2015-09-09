@@ -1,5 +1,5 @@
 ##########################################################################################
-
+#
 #!/bin/bash
 # version 0.20
 # version 0.30 - changed names
@@ -36,8 +36,8 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 #
 ##########################################################################################
 
-#liquidbits_ccedk_btc=$cwd/liquidbits_ccedk_btc
-#liquidbits_ccedk_eur=$cwd/liquidbits_ccedk_eur
+liquidbits_ccedk_btc=$cwd/liquidbits_ccedk_btc
+liquidbits_ccedk_eur=$cwd/liquidbits_ccedk_eur
 #liquidbits_ccedk_usd=$cwd/liquidbits_ccedk_usd
 #nupond_bter_btc=$cwd/nupond_bter_btc
 #nupond_bter_cny=$cwd/nupond_bter_cny
@@ -97,6 +97,4 @@ cd $nuriver_cryptsy_btc
 screen -dmS nuriver_cryptsy_btc ./client-cryptsy-btc
 cd $nuriver_cryptsy_usd
 screen -dmS nuriver_cryptsy_usd ./client-cryptsy-usd
-
-sleep 2
 screen -ls
