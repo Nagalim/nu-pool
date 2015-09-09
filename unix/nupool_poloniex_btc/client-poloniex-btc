@@ -6,8 +6,8 @@ config=`mktemp`
 options=`getopt -o x:a:k:s:i:ou:e:d:f:r:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,restime:,trading: -- "$@"`
 eval set -- "$options"
 
-if [ -e pool-bittrex-btc ];then
-  cp pool-bittrex-btc $config
+if [ -e pool-poloniex-btc ];then
+  cp pool-poloniex-btc $config
 fi
 
 while [ $# -gt 0 ]; do
