@@ -102,36 +102,36 @@ fi
 date
 #echo "### $pool01name ###"
 #echo $pool01logdir$pool01log
-#tail -n 10 $pool01logdir$pool01log | grep balance | tail -n 1  && echo
+#tail -n 10 $pool01logdir$pool01log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool02name ###"
 #echo $pool02logdir$pool02log
-#tail -n 10 $pool02logdir$pool02log | grep balance | tail -n 1 && echo
+#tail -n 10 $pool02logdir$pool02log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool03name ###"
 #echo $pool03logdir$pool03log
-#tail -n 10 $pool03logdir$pool03log | grep balance | tail -n 1 && echo
+#tail -n 10 $pool03logdir$pool03log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool04name ###"
 #echo $pool04logdir$pool04log
-#tail -n 10 $pool04logdir$pool04log | grep balance | tail -n 1 && echo
+#tail -n 10 $pool04logdir$pool04log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool05name ###"
 #echo $pool05logdir$pool05log
-#tail -n 10 $pool05logdir$pool05log | grep balance | tail -n 1 && echo
+#tail -n 10 $pool05logdir$pool05log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool06name ###"
 #echo $pool06logdir$pool06log
-#tail -n 10 $pool06logdir$pool06log | grep balance | tail -n 1 && echo
+#tail -n 10 $pool06logdir$pool06log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool07name ###"
 #echo $pool07logdir$pool07log
-#tail -n 10 $pool07logdir$pool07log | grep balance | tail -n 1 && echo
+#tail -n 10 $pool07logdir$pool07log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool08name ###"
 #echo $pool08logdir$pool08log
-#tail -n 10 $pool08logdir$pool08log | grep balance | tail -n 1 && echo
+#tail -n 10 $pool08logdir$pool08log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool09name ###"
 #echo $pool09logdir$pool09log
-#tail -n 10 $pool09logdir$pool09log | grep balance | tail -n 1
+#tail -n 10 $pool09logdir$pool09log | sort -r | grep balance | head -n 1
