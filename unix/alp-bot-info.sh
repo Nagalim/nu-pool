@@ -10,6 +10,8 @@
 #
 # version 0.41 - changed name to make auto completion in bash more convenient
 #
+# version 0.42 - changed output to improve the readability
+#
 ##########################################################################################
 
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -100,36 +102,36 @@ fi
 date
 #echo "### $pool01name ###"
 #echo $pool01logdir$pool01log
-#tail -n 2 $pool01logdir$pool01log && echo
+#tail -n 10 $pool01logdir$pool01log | grep balance | tail -n 1  && echo
 
 #echo "### $pool02name ###"
 #echo $pool02logdir$pool02log
-#tail -n 2 $pool02logdir$pool02log && echo
+#tail -n 10 $pool02logdir$pool02log | grep balance | tail -n 1 && echo
 
 #echo "### $pool03name ###"
 #echo $pool03logdir$pool03log
-#tail -n 2 $pool03logdir$pool03log && echo
+#tail -n 10 $pool03logdir$pool03log | grep balance | tail -n 1 && echo
 
 #echo "### $pool04name ###"
 #echo $pool04logdir$pool04log
-#tail -n 2 $pool04logdir$pool04log && echo
+#tail -n 10 $pool04logdir$pool04log | grep balance | tail -n 1 && echo
 
 #echo "### $pool05name ###"
 #echo $pool05logdir$pool05log
-#tail -n 2 $pool05logdir$pool05log && echo
+#tail -n 10 $pool05logdir$pool05log | grep balance | tail -n 1 && echo
 
 #echo "### $pool06name ###"
 #echo $pool06logdir$pool06log
-#tail -n 2 $pool06logdir$pool06log && echo
+#tail -n 10 $pool06logdir$pool06log | grep balance | tail -n 1 && echo
 
 #echo "### $pool07name ###"
 #echo $pool07logdir$pool07log
-#tail -n 2 $pool07logdir$pool07log && echo
+#tail -n 10 $pool07logdir$pool07log | grep balance | tail -n 1 && echo
 
 #echo "### $pool08name ###"
 #echo $pool08logdir$pool08log
-#tail -n 2 $pool08logdir$pool08log && echo
+#tail -n 10 $pool08logdir$pool08log | grep balance | tail -n 1 && echo
 
 #echo "### $pool09name ###"
 #echo $pool09logdir$pool09log
-#tail -n 2 $pool09logdir$pool09log
+#tail -n 10 $pool09logdir$pool09log | grep balance | tail -n 1
