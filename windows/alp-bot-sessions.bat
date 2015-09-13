@@ -53,6 +53,10 @@ set cwd=%cd%
 ::cd %cwd%\nupond_bter_cny\
 ::start client-bter-cny.bat
 ::
+:: client-bter-cny-fix-payout-test bot; remove "::" from the next two lines to use it
+::cd %cwd%\client-bter-cny-fix-payout-test\
+::start client-bter-cny-fix-payout-test.bat
+::
 :: nupool_bittrex_btc bot; remove "::" from the next two lines to use it
 ::cd %cwd%\nupool_bittrex_btc\
 ::start client-bittrex-btc.bat
