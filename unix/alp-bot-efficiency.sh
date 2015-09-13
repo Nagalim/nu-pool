@@ -6,7 +6,7 @@
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 cwd=$cwd"/"
 logs="/logs/"
-alp_bot_array=( liquidbits_ccedk_btc liquidbits_ccedk_eur liquidbits_ccedk_usd nupond_bter_btc nupond_bter_cny nupool_bittrex_btc nupool_poloniex_btc nuriver_cryptsy_btc nuriver_cryptsy_usd )
+alp_bot_array=( liquidbits_ccedk_btc liquidbits_ccedk_eur liquidbits_ccedk_usd nupond_bter_btc nupond_bter_cny nupond_bter_cny_fix_payout_test nupool_bittrex_btc nupool_poloniex_btc nuriver_cryptsy_btc nuriver_cryptsy_usd )
 
 for bot in "${alp_bot_array[@]}"
 do

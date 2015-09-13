@@ -41,6 +41,7 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 #liquidbits_ccedk_usd=$cwd/liquidbits_ccedk_usd
 #nupond_bter_btc=$cwd/nupond_bter_btc
 #nupond_bter_cny=$cwd/nupond_bter_cny
+#nupond_bter_cny=$cwd/nupond_bter_cny_fix_payout_test
 #nupool_bittrex_btc=$cwd/nupool_bittrex_btc
 #nupool_poloniex_btc=$cwd/nupool_poloniex_btc
 #nuriver_cryptsy_btc=$cwd/nuriver_cryptsy_btc
@@ -89,6 +90,8 @@ cd $nupond_bter_btc
 screen -dmS nupond_bter_btc ./client-bter-btc
 cd $nupond_bter_cny
 screen -dmS nupond_bter_cny ./client-bter-cny
+cd $nupond_bter_cny_fix_payout_test
+screen -dmS nupond_bter_cny_fix_payout_test ./client-bter-cny-fix-payout-test
 cd $nupool_bittrex_btc
 screen -dmS nupool_bittrex_btc  ./client-bittrex-btc
 cd $nupool_poloniex_btc

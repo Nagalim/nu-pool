@@ -12,6 +12,8 @@
 #
 # version 0.42 - changed output to improve the readability
 #
+# version 0.45 - added nupond_bter_cny_fix_payout_test
+#
 ##########################################################################################
 
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -93,6 +95,12 @@ if [ -d "$pool09logdir" ]; then
         pool09log=`ls -t $pool09logdir | head -n 1`
 fi
 
+pool10name="nupond_bter_cny_fix_payout_test"
+pool10logdir=$cwd/$pool10name/logs/
+if [ -d "$pool10logdir" ]; then
+        pool10log=`ls -t $pool10logdir | head -n 1`
+fi
+
 
 #
 # And here starts the part with the outputs
@@ -135,3 +143,7 @@ date
 #echo "### $pool09name ###"
 #echo $pool09logdir$pool09log
 #tail -n 10 $pool09logdir$pool09log | sort -r | grep balance | head -n 1
+
+#echo "### $pool10name ###"
+#echo $pool10logdir$pool10log
+#tail -n 10 $pool10logdir$pool10log | sort -r | grep balance | head -n 1
