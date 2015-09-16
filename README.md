@@ -1,4 +1,4 @@
-## Trustless Liquidity Pool ##
+## Automated Liquidity Pool - formerly known as Trustless Liquidity Pool ##
 
 [![Join the Nu-pool chat at https://gitter.im/inuitwallet/nu-pool](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/inuitwallet/nu-pool?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 Nu-Pool
