@@ -32,10 +32,10 @@ interest = 0
 ordermatch = True
 
 # Determines window of allowed price deviation
-deviation = 0.0025
+deviation = 0.0015
 
 # Determines market spread
-offset = 0.004
+offset = 0.006
 
 # Sets time (in hours) between bot resets. [bug fixer]
 restime = 0.25
@@ -44,7 +44,6 @@ restime = 0.25
 
 ### GENERAL OPERATION PARAMETERS - DO NOT CHANGE ###
 
-#server=eu.nupool.net
-server=nbt.liquidbits.net
-unit=eur
-exchange=ccedk
+server=nupond.net:3333
+unit=cny
+exchange=bter

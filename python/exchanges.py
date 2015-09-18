@@ -216,6 +216,141 @@ class Bittrex(Exchange):
         return orders
 
 
+class Cryptsy(Exchange):
+    def __init__(self):
+        super(Cryptsy, self).__init__(0.002)
+        self.market_codes = {}
+        self.currency_codes = {}
+        self.key = None
+        self.secret = None
+
+    def __repr__(self):
+        return "cryptsy"
+
+    def adjust(self, error):
+        pass
+
+    def post(self, params, key, secret):
+        self.key = key
+        self.secret = secret
+        request = {'nonce': self.nonce()}
+        request.update(params)
+        data = urllib.urlencode(request)
+        sign = hmac.new(secret, data, hashlib.sha512).hexdigest()
+        headers = {'Sign': sign, 'Key': key}
+        return json.loads(urllib2.urlopen(urllib2.Request(
+            url='https://api.cryptsy.com/api', data=data,
+            headers=headers)).read())
+
+    def get(self, method, params, key, secret):
+        self.key = key
+        self.secret = secret
+        request = {'nonce': self.nonce()}
+        request.update(params)
+        data = urllib.urlencode(request)
+        sign = hmac.new(secret, data, hashlib.sha512).hexdigest()
+        headers = {'Sign': sign, 'Key': key}
+        return json.loads(urllib2.urlopen(urllib2.Request(
+            url='https://api.cryptsy.com/api/{0}?{1}'.format(method, data),
+            headers=headers)).read())
+
+    def get_market_codes(self, key, secret):
+        if self.market_codes:
+            return self.market_codes
+        market_data = self.post({'method': 'getmarkets'}, key, secret)
+        for market in market_data['return']:
+            self.market_codes[market['label']] = market['marketid']
+        return self.market_codes
+
+    def get_market_id(self, unit, key, secret):
+        codes = self.get_market_codes(key, secret)
+        return codes['NBT/{0}'.format(unit.upper())]
+
+    def cancel_orders(self, unit, side, key, secret):
+        response = self.post({'method': 'myorders',
+                              'marketid': self.get_market_id(unit, key, secret)}, key,
+                             secret)
+        if int(response['success']) == 0:
+            return response
+        for order in response['return']:
+            if side == 'all' or (side == 'bid' and order['ordertype'] == 'Buy') or (
+                            side == 'ask' and order['ordertype'] == 'Sell'):
+                ret = self.post({'method': 'cancelorder', 'orderid': order['orderid']},
+                                key, secret)
+                if int(ret['success']) == 0:
+                    if isinstance(response, list):
+                        response = {'error': ""}
+                    response['error'] += "," + ret['error']
+        return response
+
+    def get_fee(self, unit, side, amount, price, key, secret):
+        params = {'method': 'calculatefees',
+                  'ordertype': 'Buy' if side == 'bid' else 'Sell',
+                  'quantity': amount,
+                  'price': price,
+                  'marketid': self.get_market_id(unit, key, secret)}
+        response = self.post(params, key, secret)
+        if int(response['success']) == 0:
+            return self.fee
+        return (float(response['return']['fee']) / float(price)) / 100
+
+    def place_order(self, unit, side, key, secret, amount, price):
+        params = {'method': 'createorder',
+                  'marketid': self.get_market_id(unit, key, secret),
+                  'ordertype': 'Buy' if side == 'bid' else 'Sell',
+                  'quantity':
+                      (str(float(amount) - float(self.get_fee(unit, side, amount,
+                                                              price, key, secret)))) if
+                      side == 'bid' else amount,
+                  'price': price}
+        response = self.post(params, key, secret)
+        if int(response['success']) > 0:
+            response['id'] = int(response['orderid'])
+        return response
+
+    def get_balance(self, unit, key, secret):
+        response = self.post({'method': 'getinfo'}, key, secret)
+        if int(response['success']) > 0:
+            response['balance'] = float(
+                response['return']['balances_available'][unit.upper()])
+        return response
+
+    def get_price(self, unit):
+        response = self.post({'method': 'depth', 'marketid': self.get_market_id(
+            unit,
+            self.key,
+            self.secret)}, self.key, self.secret)
+        if int(response['success']) > 0:
+            response.update({'bid': None, 'ask': None})
+            if response['return']['buy']:
+                response['bid'] = float(response['return']['buy'][0][0])
+            if response['return']['sell']:
+                response['ask'] = float(response['return']['sell'][0][0])
+        return response
+
+    def create_request(self, unit, key=None, secret=None):
+        if not secret:
+            return None, None
+        request = {'method': 'myorders',
+                   'marketid': self.get_market_id(unit, key, secret),
+                   'nonce': self.nonce()}
+        data = urllib.urlencode(request)
+        sign = hmac.new(secret, data, hashlib.sha512).hexdigest()
+        return request, sign
+
+    def validate_request(self, key, unit, data, sign):
+        headers = {'Sign': sign, 'Key': key}
+        ret = urllib2.urlopen(urllib2.Request('https://api.cryptsy.com/api',
+                                              urllib.urlencode(data), headers), timeout=5)
+        response = json.loads(ret.read())
+        if int(response['success']) == 0:
+            return response
+        return [{'id': int(order['orderid']),
+                 'price': float(order['price']),
+                 'type': 'ask' if order['ordertype'] == 'Sell' else 'bid',
+                 'amount': float(order['quantity'])} for order in response['return']]
+
+
 class Poloniex(Exchange):
     def __init__(self):
         super(Poloniex, self).__init__(0.002)
