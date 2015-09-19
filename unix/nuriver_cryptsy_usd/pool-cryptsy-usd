@@ -40,6 +40,9 @@ offset = 0.0058
 # Sets time (in hours) between bot resets. [bug fixer]
 restime = 0.25
 
+# Maximum NBT to place on sell side
+fillfactor = 10000
+
 
 
 
