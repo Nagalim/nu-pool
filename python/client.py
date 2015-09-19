@@ -2,17 +2,14 @@
 """
 The MIT License (MIT)
 Copyright (c) 2015 creon (creon.nu@gmail.com)
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -39,8 +36,8 @@ from exchanges import *
 from trading import *
 from utils import *
 
-_wrappers = {'bittrex': Bittrex, 'cryptsy': Cryptsy, 'poloniex': Poloniex, 'ccedk': CCEDK, 'bitcoincoid': BitcoinCoId, 'bter': BTER,
-             'testing': Peatio}
+_wrappers = {'bittrex': Bittrex, 'poloniex': Poloniex, 'ccedk': CCEDK, 'bitcoincoid': BitcoinCoId, 'bter': BTER,
+             'testing': Peatio, 'cryptsy': Cryptsy}
 _mainlogger = None
 
 
@@ -127,7 +124,8 @@ class Client(ConnectionThread):
         self.users = {}
         self.lock = threading.Lock()
 
-    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True, deviation=0.0025, offset=0.002, restime=24):
+    def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True,
+            deviation=0.0025, reset_timer=0, offset=0.002, fillfactor=10000):
         if not name in self.exchangeinfo or not unit in self.exchangeinfo[name]:
             return False
         key = str(key)
@@ -143,18 +141,25 @@ class Client(ConnectionThread):
         if unit in self.users[key]:
             self.shutdown(key, unit)
         self.users[key][unit] = {
-            'request': RequestThread(self.conn, key, secret, exchange, unit, address, self.sampling, cost, self.logger)}
+            'request': RequestThread(self.conn, key, secret, exchange, unit, address,
+                                     self.sampling, cost, self.logger)}
         self.users[key][unit]['request'].start()
         target = {'bid': self.exchangeinfo[name][unit]['bid']['target'],
                   'ask': self.exchangeinfo[name][unit]['ask']['target']}
         if not bot or bot == 'none':
             self.users[key][unit]['order'] = None
         elif bot == 'nubot':
-            self.users[key][unit]['order'] = NuBot(self.conn, self.users[key][unit]['request'], key, secret, exchange,
-                                                   unit, target, self.logger, ordermatch)
+            self.users[key][unit]['order'] = NuBot(self.conn,
+                                                   self.users[key][unit]['request'], key,
+                                                   secret, exchange, unit, target,
+                                                   self.logger, ordermatch, deviation,
+                                                   reset_timer, offset)
         elif bot == 'pybot':
-            self.users[key][unit]['order'] = PyBot(self.conn, self.users[key][unit]['request'], key, secret, exchange,
-                                                   unit, target, self.logger, ordermatch, deviation, offset, restime)
+            self.users[key][unit]['order'] = PyBot(self.conn,
+                                                   self.users[key][unit]['request'], key,
+                                                   secret, exchange, unit, target,
+                                                   self.logger, ordermatch, deviation,
+                                                   reset_timer, offset, fillfactor)
         else:
             self.logger.error("unknown order handler: %s", bot)
             self.users[key][unit]['order'] = None
@@ -325,7 +330,7 @@ if __name__ == "__main__":
                     key = user[3]
                     secret = user[4]
                     name = user[2].lower()
-                    if not name in _wrappers:
+                    if name not in _wrappers:
                         logger.error("unknown exchange: %s", user[2])
                         sys.exit(1)
                     exchange = _wrappers[name]
@@ -354,9 +359,16 @@ if __name__ == "__main__":
                     else:
                         bid = None
                         ask = None
-                    bot = 'pybot' if not 'trading' in configdata else configdata['trading']
-                    ordermatch = True if not 'ordermatch' in configdata else (
+                    bot = 'pybot' if 'trading' not in configdata else configdata[
+                        'trading']
+                    ordermatch = True if 'ordermatch' not in configdata else (
                         configdata['ordermatch'] in ['False', 'false', '0'])
+                    deviation = 0.0025 if 'deviation' not in configdata else \
+                        configdata['deviation']
+                    reset_timer = 0 if 'reset_timer' not in configdata else configdata[
+                        'reset_timer']
+                    offset = 0.002 if 'offset' not in configdata else configdata['offset']
+		    fillfactor = 10000 if 'fillfactor' not in configdata else configdata['fillfactor']
                     if 'server' in configdata:
                         if 'apikey' in configdata:
                             if 'apisecret' in configdata:
@@ -366,48 +378,10 @@ if __name__ == "__main__":
                                             name = configdata['exchange'].lower()
                                             if name in _wrappers:
                                                 client = Client(configdata['server'], logger)
-                                                if 'deviation' in configdata:
-                                                    if 'offset' in configdata:
-                                                      if 'restime' in configdata:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
-                                                           configdata['address'], name, configdata['unit'].lower(), bid,
-                                                           ask, bot, ordermatch,deviation=configdata['deviation'],
-                                                           offset=configdata['offset'],restime=configdata['restime'])
-                                                      else:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
+                                                client.set(configdata['apikey'], configdata['apisecret'],
                                                            configdata['address'], name, configdata['unit'].lower(), bid,
                                                            ask, bot, ordermatch,
-                                                           deviation=configdata['deviation'],offset=configdata['offset'])
-                                                    else:
-                                                      if 'restime' in configdata:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
-                                                           configdata['address'], name, configdata['unit'].lower(), bid,
-                                                           ask, bot, ordermatch, deviation=configdata['deviation'],
-                                                           restime=configdata['restime'])
-                                                      else:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
-                                                           configdata['address'], name, configdata['unit'].lower(), bid,
-                                                           ask, bot, ordermatch, deviation=configdata['deviation'])
-                                                else:
-                                                    if 'offset' in configdata:
-                                                      if 'restime' in configdata:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
-                                                           configdata['address'], name, configdata['unit'].lower(), bid,
-                                                           ask, bot, ordermatch, offset=configdata['offset'],
-                                                           restime=configdata['restime'])
-                                                      else:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
-                                                           configdata['address'], name, configdata['unit'].lower(), bid,
-                                                           ask, bot, ordermatch, offset=configdata['offset'])
-                                                    else:
-                                                      if 'restime' in configdata:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
-                                                           configdata['address'], name, configdata['unit'].lower(), bid,
-                                                           ask, bot, ordermatch, restime=configdata['restime'])
-                                                      else:
-                                                        client.set(configdata['apikey'], configdata['apisecret'],
-                                                           configdata['address'], name, configdata['unit'].lower(), bid,
-                                                           ask, bot, ordermatch)
+                                                           deviation, reset_timer, offset, fillfactor)
                                             else:
                                                 logger.error("unknown exchange: %s", name)
                                         else:
