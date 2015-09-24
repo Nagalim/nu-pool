@@ -9,6 +9,10 @@
 # version 0.40 - moved script to unix directory
 #       and adjusted paths accordingly
 #
+# version 0.45 - added nupond_bter_cny_fix_payout_test
+#
+# version 0.50 - prepared southxchange ("southx") bots
+#
 ##########################################################################################
 
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
@@ -45,7 +49,7 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 #nupool_bittrex_btc=$cwd/nupool_bittrex_btc
 #nupool_poloniex_btc=$cwd/nupool_poloniex_btc
 #nuriver_cryptsy_btc=$cwd/nuriver_cryptsy_btc
-#nuriver_cryptsy_usd=$cwd/nuriver_cryptsy_usd
+#southx_btc=$cwd/southx_btc
 
 
 # The next section deals with starting screen sesssions and running ALP bots within
@@ -100,6 +104,8 @@ cd $nuriver_cryptsy_btc
 screen -dmS nuriver_cryptsy_btc ./client-cryptsy-btc
 cd $nuriver_cryptsy_usd
 screen -dmS nuriver_cryptsy_usd ./client-cryptsy-usd
+cd $southx_btc
+screen -dmS southx_btc ./client-southx-btc
 
 sleep 2
 screen -ls
