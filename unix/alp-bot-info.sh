@@ -103,7 +103,7 @@ if [ -d "$pool10logdir" ]; then
         pool10log=`ls -t $pool10logdir | head -n 1`
 fi
 
-pool11name="southx_btc"
+pool11name="liquidbits_southx_btc"
 pool11logdir=$cwd/$pool11name/logs/
 if [ -d "$pool11logdir" ]; then
         pool11log=`ls -t $pool11logdir | head -n 1`

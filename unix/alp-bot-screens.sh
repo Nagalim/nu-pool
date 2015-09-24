@@ -49,7 +49,7 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 #nupool_bittrex_btc=$cwd/nupool_bittrex_btc
 #nupool_poloniex_btc=$cwd/nupool_poloniex_btc
 #nuriver_cryptsy_btc=$cwd/nuriver_cryptsy_btc
-#southx_btc=$cwd/southx_btc
+#liquidbits_southx_btc="$cwd/liquidbits_southx_btc
 
 
 # The next section deals with starting screen sesssions and running ALP bots within
@@ -104,8 +104,8 @@ cd $nuriver_cryptsy_btc
 screen -dmS nuriver_cryptsy_btc ./client-cryptsy-btc
 cd $nuriver_cryptsy_usd
 screen -dmS nuriver_cryptsy_usd ./client-cryptsy-usd
-cd $southx_btc
-screen -dmS southx_btc ./client-southx-btc
+cd $liquidbits_southx_btc
+screen -dmS liquidbits_southx_btc ./client-southx-btc
 
 sleep 2
 screen -ls
