@@ -78,7 +78,7 @@ set cwd=%cd%
 ::cd %cwd%\nuriver_cryptsy_usd
 ::start client-cryptsy-usd.bat
 ::
-:: southx_btc bot; remove "::" from the next two lines to use it
-::cd %cwd%\southx_btc
-::start client-southx-usd.bat
+:: liquidbits_southx_btc bot; remove "::" from the next two lines to use it
+::cd %cwd%\liquidbits_southx_btc
+::start client-southx-btc.bat
 
