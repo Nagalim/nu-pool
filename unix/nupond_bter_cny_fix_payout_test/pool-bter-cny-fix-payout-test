@@ -32,18 +32,21 @@ interest = 0
 ordermatch = True
 
 # Determines window of allowed price deviation
-deviation = 0.003
+deviation = 0.0015
 
 # Determines market spread
-offset = 0.005
+offset = 0.006
 
 # Sets time (in hours) between bot resets. [bug fixer]
-restime = 0.25
+reset_timer = 0.5
+
+# Maximum NBT to place on sell side
+fillfactor = 10000
 
 
 
 ### GENERAL OPERATION PARAMETERS - DO NOT CHANGE ###
 
-server=eu.nupool.net
-unit=btc
-exchange=bittrex
+server=45.55.55.197:3333
+unit=cny
+exchange=bter

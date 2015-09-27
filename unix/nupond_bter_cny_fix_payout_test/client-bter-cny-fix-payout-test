@@ -6,8 +6,8 @@ config=`mktemp`
 options=`getopt -o x:a:k:s:i:ou:e:d:f:r:m:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,restart_timer:,fillfactor:,trading: -- "$@"`
 eval set -- "$options"
 
-if [ -e pool-ccedk-usd ];then
-  cp pool-ccedk-usd $config
+if [ -e pool-bter-cny-fix-payout-test ];then
+  cp pool-bter-cny-fix-payout-test $config
 fi
 
 while [ $# -gt 0 ]; do

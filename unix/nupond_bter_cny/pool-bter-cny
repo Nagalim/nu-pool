@@ -19,6 +19,7 @@ apikey = xxxxxxx
 apisecret = xxxxxxx
 
 
+
 ### OPTIONAL PARAMETERS ###
 
 # interest: minimal interest rate at which you want to get payouts in percent (0.25% = 0.25).

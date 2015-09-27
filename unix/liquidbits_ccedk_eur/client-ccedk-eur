@@ -3,7 +3,7 @@
 client=../../python/client.py
 
 config=`mktemp`
-options=`getopt -o x:a:k:s:i:ou:e:d:f:r:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,restime:,trading: -- "$@"`
+options=`getopt -o x:a:k:s:i:ou:e:d:f:r:m:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,restart_timer:,fillfactor:,trading: -- "$@"`
 eval set -- "$options"
 
 if [ -e pool-ccedk-eur ];then
@@ -24,6 +24,7 @@ while [ $# -gt 0 ]; do
   -d|--deviation) echo "deviation=$2";shift;;
   -f|--offset) echo "offset=$2";shift;;
   -r|--restime) echo "restime=$2";shift;;
+  -m|--fillfactor) echo "fillfactor=$2";shift;;
   (--) shift; break;;
   (-*) break;;
   (*) break;;

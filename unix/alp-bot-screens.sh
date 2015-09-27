@@ -1,14 +1,20 @@
-
+##########################################################################################
+#
 #!/bin/bash
 # version 0.20
 # version 0.30 - changed names
 #       from    [pool]-[exchange]-[pair]
 #       to      [pool]_[exchange]_[pair]
 #
-#################################
+# version 0.40 - moved script to unix directory
+#       and adjusted paths accordingly
+#
+##########################################################################################
 
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 
+##########################################################################################
+#
 # This is a nastily scripted, but hopefully helpful tool
 # to run multiple ALP bots on a single machine.
 # It was created on a RaspberryPi with Raspbian (by https://discuss.nubits.com/users/masterofdisaster/)
@@ -26,17 +32,20 @@ cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 #
 #
 # Following are the paths to the different ALP bots
-# Uncomment each line which refers to an ALP bot you intend to use
+# Uncomment each line which refers to an ALP bot you intend to use: remove "#" to activate
+#
+##########################################################################################
 
-#liquidbits_ccedk_btc=$cwd/unix/liquidbits_ccedk_btc
-#liquidbits_ccedk_eur=$cwd/unix/liquidbits_ccedk_eur
-#liquidbits_ccedk_usd=$cwd/unix/liquidbits_ccedk_usd
-#nupond_bter_btc=$cwd/unix/nupond_bter_btc
-#nupond_bter_cny=$cwd/unix/nupond_bter_cny
-#nupool_bittrex_btc=$cwd/unix/nupool_bittrex_btc
-#nupool_poloniex_btc=$cwd/unix/nupool_poloniex_btc
-#nuriver_cryptsy_btc=$cwd/unix/nuriver_cryptsy_btc
-#nuriver_cryptsy_usd=$cwd/unix/nuriver_cryptsy_usd
+#liquidbits_ccedk_btc=$cwd/liquidbits_ccedk_btc
+#liquidbits_ccedk_eur=$cwd/liquidbits_ccedk_eur
+#liquidbits_ccedk_usd=$cwd/liquidbits_ccedk_usd
+#nupond_bter_btc=$cwd/nupond_bter_btc
+#nupond_bter_cny=$cwd/nupond_bter_cny
+#nupond_bter_cny=$cwd/nupond_bter_cny_fix_payout_test
+#nupool_bittrex_btc=$cwd/nupool_bittrex_btc
+#nupool_poloniex_btc=$cwd/nupool_poloniex_btc
+#nuriver_cryptsy_btc=$cwd/nuriver_cryptsy_btc
+#nuriver_cryptsy_usd=$cwd/nuriver_cryptsy_usd
 
 
 # The next section deals with starting screen sesssions and running ALP bots within
@@ -81,6 +90,8 @@ cd $nupond_bter_btc
 screen -dmS nupond_bter_btc ./client-bter-btc
 cd $nupond_bter_cny
 screen -dmS nupond_bter_cny ./client-bter-cny
+cd $nupond_bter_cny_fix_payout_test
+screen -dmS nupond_bter_cny_fix_payout_test ./client-bter-cny-fix-payout-test
 cd $nupool_bittrex_btc
 screen -dmS nupool_bittrex_btc  ./client-bittrex-btc
 cd $nupool_poloniex_btc
