@@ -1,12 +1,24 @@
+##########################################################################################
 #!/bin/bash
+#
+# version 0.45 - added nupond_bter_cny_fix_payout_test
+#
+# version 0.50 - prepared southxchange ("southx") bots
+#
+##########################################################################################
+
+##########################################################################################
+#
 # The script will leave out never used ALP.
 # If the "log" directory already exists the bot will go mad.
 # Remove the ALPs from the "alp_bot_array" to make the bot sane again :)
+#
+##########################################################################################
 
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd ) # <-- Do not edit this!
 cwd=$cwd"/"
 logs="/logs/"
-alp_bot_array=( liquidbits_ccedk_btc liquidbits_ccedk_eur liquidbits_ccedk_usd nupond_bter_btc nupond_bter_cny nupond_bter_cny_fix_payout_test nupool_bittrex_btc nupool_poloniex_btc nuriver_cryptsy_btc nuriver_cryptsy_usd )
+alp_bot_array=( liquidbits_ccedk_btc liquidbits_ccedk_eur liquidbits_ccedk_usd nupond_bter_btc nupond_bter_cny nupond_bter_cny_fix_payout_test nupool_bittrex_btc nupool_poloniex_btc nuriver_cryptsy_btc nuriver_cryptsy_usd liquidbits_southx_btc )
 
 for bot in "${alp_bot_array[@]}"
 do

@@ -2,6 +2,11 @@
 ::
 :: version 0.30 initial windows version
 ::
+:: version 0.42 included
+::
+:: version 0.45 prepared southxchange bot
+::
+::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
 :: This is a nastily scripted batch file, but helps you start mutliple bots at once
@@ -72,3 +77,8 @@ set cwd=%cd%
 :: nuriver_cryptsy_usd bot; remove "::" from the next two lines to use it
 ::cd %cwd%\nuriver_cryptsy_usd
 ::start client-cryptsy-usd.bat
+::
+:: liquidbits_southx_btc bot; remove "::" from the next two lines to use it
+::cd %cwd%\liquidbits_southx_btc
+::start client-southx-btc.bat
+

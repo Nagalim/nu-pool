@@ -14,6 +14,8 @@
 #
 # version 0.45 - added nupond_bter_cny_fix_payout_test
 #
+# version 0.50 - prepared southxchange ("southx") bots
+#
 ##########################################################################################
 
 cwd=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -101,6 +103,11 @@ if [ -d "$pool10logdir" ]; then
         pool10log=`ls -t $pool10logdir | head -n 1`
 fi
 
+pool11name="liquidbits_southx_btc"
+pool11logdir=$cwd/$pool11name/logs/
+if [ -d "$pool11logdir" ]; then
+        pool11log=`ls -t $pool11logdir | head -n 1`
+fi
 
 #
 # And here starts the part with the outputs
@@ -142,8 +149,13 @@ date
 
 #echo "### $pool09name ###"
 #echo $pool09logdir$pool09log
-#tail -n 10 $pool09logdir$pool09log | sort -r | grep balance | head -n 1
+#tail -n 10 $pool09logdir$pool09log | sort -r | grep balance | head -n 1 && echo
 
 #echo "### $pool10name ###"
 #echo $pool10logdir$pool10log
-#tail -n 10 $pool10logdir$pool10log | sort -r | grep balance | head -n 1
+#tail -n 10 $pool10logdir$pool10log | sort -r | grep balance | head -n 1 && echo
+
+#echo "### $pool11name ###"
+#echo $pool11logdir$pool11log
+#tail -n 10 $pool11logdir$pool11log | sort -r | grep balance | head -n 1
+
