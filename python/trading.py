@@ -99,7 +99,7 @@ class NuBot(ConnectionThread):
 
 class PyBot(ConnectionThread):
     def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False,
-                 deviation=0.0025, reset_timer=0, offset=0.002, fillfactor=10000):
+                 deviation=0.0025, reset_timer=0, offset=0.002, shift=0, fillfactor=10000):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
@@ -115,6 +115,7 @@ class PyBot(ConnectionThread):
         self.deviation = deviation
         self.reset_timer = reset_timer
         self.offset = offset
+ 	self.shift = shift
 	self.placetimer = 0
 	self.fillfactor = fillfactor
         if not hasattr(PyBot, 'lock'):
@@ -232,9 +233,10 @@ class PyBot(ConnectionThread):
                               response['error'])
         else:
             spread = max(self.exchange.fee, float(self.offset))
-            bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(
+	    shift = float(self.shift)
+            bidprice = ceil(self.price * (1.0 - spread + shift) * 10 ** 8) / float(
                 10 ** 8)  # truncate floating point precision after 8th position
-            askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
+            askprice = ceil(self.price * (1.0 + spread + shift) * 10 ** 8) / float(10 ** 8)
             if response['ask'] is None or response['ask'] > bidprice:
                 self.place('bid', bidprice)
             else:
@@ -246,7 +248,7 @@ class PyBot(ConnectionThread):
                 elif self.lastlimit['bid'] != self.limit['bid']:
                     self.logger.error('unable to place bid %s order at %.8f on %s: matching order at %.8f detected',
                                       self.unit, bidprice, repr(self.exchange), response['ask'])
-                elif self.ordermatch:
+                if self.ordermatch:
                     self.logger.warning('matching ask %s order at %.8f on %s', self.unit, response['ask'],
                                         repr(self.exchange))
                     self.place('bid', bidprice)
@@ -261,7 +263,7 @@ class PyBot(ConnectionThread):
                 elif self.lastlimit['ask'] != self.limit['ask']:
                     self.logger.error('unable to place ask %s order at %.8f on %s: matching order at %.8f detected',
                                       self.unit, askprice, repr(self.exchange), response['bid'])
-                elif self.ordermatch:
+                if self.ordermatch:
                     self.logger.warning('matching bid %s order at %.8f on %s', self.unit, response['bid'],
                                         repr(self.exchange))
                     self.place('ask', askprice)

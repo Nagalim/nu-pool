@@ -125,7 +125,7 @@ class Client(ConnectionThread):
         self.lock = threading.Lock()
 
     def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True,
-            deviation=0.0025, reset_timer=0, offset=0.002, fillfactor=10000):
+            deviation=0.0025, reset_timer=0, offset=0.002, shift=0.0, fillfactor=10000):
         if not name in self.exchangeinfo or not unit in self.exchangeinfo[name]:
             return False
         key = str(key)
@@ -159,7 +159,7 @@ class Client(ConnectionThread):
                                                    self.users[key][unit]['request'], key,
                                                    secret, exchange, unit, target,
                                                    self.logger, ordermatch, deviation,
-                                                   reset_timer, offset, fillfactor)
+                                                   reset_timer, offset, shift, fillfactor)
         else:
             self.logger.error("unknown order handler: %s", bot)
             self.users[key][unit]['order'] = None
@@ -367,7 +367,8 @@ if __name__ == "__main__":
                         configdata['deviation']
                     reset_timer = 0 if 'reset_timer' not in configdata else configdata[
                         'reset_timer']
-                    offset = 0.002 if 'offset' not in configdata else configdata['offset']
+                    offset = 0.002 if 'offset' not in configdata else configdata['offset']	
+		    shift = 0.0 if 'shift' not in configdata else configdata['shift']
 		    fillfactor = 10000 if 'fillfactor' not in configdata else configdata['fillfactor']
                     if 'server' in configdata:
                         if 'apikey' in configdata:
@@ -381,7 +382,7 @@ if __name__ == "__main__":
                                                 client.set(configdata['apikey'], configdata['apisecret'],
                                                            configdata['address'], name, configdata['unit'].lower(), bid,
                                                            ask, bot, ordermatch,
-                                                           deviation, reset_timer, offset, fillfactor)
+                                                           deviation, reset_timer, offset, shift, fillfactor)
                                             else:
                                                 logger.error("unknown exchange: %s", name)
                                         else:
