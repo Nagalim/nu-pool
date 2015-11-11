@@ -276,7 +276,11 @@ class PyBot(ConnectionThread):
             if response['ask'] is None or response['ask'] > bidprice:
                 self.place('bid', bidprice)
             else:
-                if 1.0 - response['ask'] / bidprice < 0.00425 - spread:
+                if self.ordermatch:
+                    self.logger.warning('matching ask %s order at %.8f on %s', self.unit, response['ask'],
+                                        repr(self.exchange))
+                    self.place('bid', bidprice)
+                elif 1.0 - response['ask'] / bidprice < 0.00425 - spread:
                     devprice = ceil(bidprice * (1.0 - 0.0045 + spread) * 10 ** 8) / float(10 ** 8)
                     self.logger.debug('decreasing bid %s order at %.8f on %s to %.8f to avoid order match', self.unit,
                                       bidprice, repr(self.exchange), devprice)
@@ -284,14 +288,14 @@ class PyBot(ConnectionThread):
                 elif self.lastlimit['bid'] != self.limit['bid']:
                     self.logger.error('unable to place bid %s order at %.8f on %s: matching order at %.8f detected',
                                       self.unit, bidprice, repr(self.exchange), response['ask'])
-                if self.ordermatch:
-                    self.logger.warning('matching ask %s order at %.8f on %s', self.unit, response['ask'],
-                                        repr(self.exchange))
-                    self.place('bid', bidprice)
             if response['bid'] == None or response['bid'] < askprice:
                 self.place('ask', askprice)
             else:
-                if 1.0 - askprice / response['bid'] < 0.00425 - spread:
+                if self.ordermatch:
+                    self.logger.warning('matching bid %s order at %.8f on %s', self.unit, response['bid'],
+                                        repr(self.exchange))
+                    self.place('ask', askprice)
+                elif 1.0 - askprice / response['bid'] < 0.00425 - spread:
                     devprice = ceil(askprice * (1.0045 - spread) * 10 ** 8) / float(10 ** 8)
                     self.logger.debug('increasing ask %s order at %.8f on %s to %.8f to avoid order match', self.unit,
                                       askprice, repr(self.exchange), devprice)
@@ -299,10 +303,6 @@ class PyBot(ConnectionThread):
                 elif self.lastlimit['ask'] != self.limit['ask']:
                     self.logger.error('unable to place ask %s order at %.8f on %s: matching order at %.8f detected',
                                       self.unit, askprice, repr(self.exchange), response['bid'])
-                if self.ordermatch:
-                    self.logger.warning('matching bid %s order at %.8f on %s', self.unit, response['bid'],
-                                        repr(self.exchange))
-                    self.place('ask', askprice)
             self.lastlimit = self.limit.copy()
         self.requester.submit()
 
