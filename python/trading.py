@@ -196,13 +196,13 @@ class PyBot(ConnectionThread):
                     fullask += orders['amount']
             fullbid = 0
             if self.unit in order_response['units']:
-                for orders in order_response['units'][self.unit]['empty']:
+                for orders in order_response['units'][self.unit]['bid']:
                     fullbid += orders['amount']
-         if side == 'ask':
+        if side == 'ask':
             empty = float(self.fillfactor) - fullask
             if time.time() - self.placetimer < 105:
                 empty = 0
-	 else:
+	else:
             empty = float(self.fillfactor) - fullbid
             if time.time() - self.placetimer2 < 105:
                 empty = 0
@@ -394,7 +394,7 @@ class PyBot(ConnectionThread):
                             efftime = curtime
                         else:
                             deviation = 1.0 - min(self.price, self.serverprice) / max(self.price, self.serverprice)
-                            if deviation > self.deviation:
+                            if deviation > float(self.deviation):
                                 self.logger.info('price of %s moved from %.8f to %.8f, will try to delete orders on %s',
                                                  self.unit, self.price, self.serverprice, repr(self.exchange))
                                 self.price = self.serverprice
