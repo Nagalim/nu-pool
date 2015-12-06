@@ -125,7 +125,8 @@ class Client(ConnectionThread):
         self.lock = threading.Lock()
 
     def set(self, key, secret, address, name, unit, bid=None, ask=None, bot='pybot', ordermatch=True,
-            deviation=0.0025, reset_timer=0, offset=0.002, shift=0.0, fillfactor=10000):
+            deviation=0.0025, reset_timer=0.0, offset=0.002, 
+	    shift={'auto':0.0,'manual':0.0}, fillfactor={'bid':10000,'ask':10000}):
         if not name in self.exchangeinfo or not unit in self.exchangeinfo[name]:
             return False
         key = str(key)
@@ -368,8 +369,8 @@ if __name__ == "__main__":
                     reset_timer = 0 if 'reset_timer' not in configdata else configdata[
                         'reset_timer']
                     offset = 0.002 if 'offset' not in configdata else configdata['offset']	
-		    shift = 0.0 if 'shift' not in configdata else configdata['shift']
-		    fillfactor = 10000 if 'fillfactor' not in configdata else configdata['fillfactor']
+		    shift = {'auto':0.0,'manual':0.0} if 'shift' not in configdata else configdata['shift']
+		    fillfactor = {'bid':10000,'ask':10000} if 'fillfactor' not in configdata else configdata['fillfactor']
                     if 'server' in configdata:
                         if 'apikey' in configdata:
                             if 'apisecret' in configdata:

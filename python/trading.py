@@ -23,6 +23,7 @@ import os
 import sys
 import subprocess
 import tempfile
+import ast
 from math import ceil
 from utils import *
 from random import randint
@@ -99,7 +100,8 @@ class NuBot(ConnectionThread):
 
 class PyBot(ConnectionThread):
     def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False,
-                 deviation=0.0025, reset_timer=0, offset=0.002, shift=0, fillfactor=10000):
+                 deviation=0.0025, reset_timer=0, offset=0.002,
+		 shift={'auto':0,'manual':0}, fillfactor={'bid':10000,'ask':10000}):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
@@ -199,14 +201,14 @@ class PyBot(ConnectionThread):
                 for orders in order_response['units'][self.unit]['bid']:
                     fullbid += orders['amount']
         if side == 'ask':
-            empty = float(self.fillfactor) - fullask
+            empty = ast.literal_eval(self.fillfactor)['ask'] - fullask
             if time.time() - self.placetimer < 105:
                 empty = 0
 	else:
-            empty = float(self.fillfactor) - fullbid
+            empty = ast.literal_eval(self.fillfactor)['bid'] - fullbid
             if time.time() - self.placetimer2 < 105:
                 empty = 0
-        shift = abs(float(self.shift))
+        shift = abs(ast.literal_eval(self.shift)['auto'])
         response = self.balance(exunit, price)
         response2 = self.balance(prounit, price)
         if 'error' in response:
@@ -224,16 +226,16 @@ class PyBot(ConnectionThread):
                 sumask = response['balance'] + fullask
                 sumbid = response2['balance'] + fullbid
                 sumtot = sumask + sumbid
-                price = price * (1 + shift * 2 * (0.5 - sumask/sumtot) )
+                price = price * (1 + shift * (1 - 2*sumask/sumtot) )
             if side == 'bid':
                 sumask = response2['balance'] + fullask
                 sumbid = response['balance'] + fullbid
                 sumtot = sumask + sumbid
-                price = price * (1 - shift * 2 * (0.5 - sumbid/sumtot) )
+                price = price * (1 + shift * (1 - 2*sumask/sumtot) )
                 try:
                     response = self.balance(exunit, price)
                 except:
-                    response['balance'] = response['balance'] * (1 - shift * 2 * (0.5 - sumbid/sumtot) )
+                    response['balance'] = response['balance'] / (1 + shift * (1 - 2*sumask/sumtot) )
             amount = min(self.limit[side], response['balance'], empty)
             if amount >= 0.5:
                 try:
@@ -270,9 +272,10 @@ class PyBot(ConnectionThread):
                               response['error'])
         else:
             spread = max(self.exchange.fee, float(self.offset))
-            bidprice = ceil(self.price * (1.0 - spread) * 10 ** 8) / float(
+	    manualshift = ast.literal_eval(self.shift)['manual']
+            bidprice = ceil(self.price * (1.0 - spread + manualshift) * 10 ** 8) / float(
                 10 ** 8)  # truncate floating point precision after 8th position
-            askprice = ceil(self.price * (1.0 + spread) * 10 ** 8) / float(10 ** 8)
+            askprice = ceil(self.price * (1.0 + spread + manualshift) * 10 ** 8) / float(10 ** 8)
             if response['ask'] is None or response['ask'] > bidprice:
                 self.place('bid', bidprice)
             else:
