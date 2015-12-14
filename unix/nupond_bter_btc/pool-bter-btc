@@ -40,8 +40,8 @@ deviation = 0.0025
 offset = 0.007
 
 # Changes the price orders get placed at with respect to the price feed.
-# AutoShift + ManualShift < Offset + Exchange Fee
-# ^ Very Important!!!! ^
+# AutoShift + Exchange Fee < Offset
+# The above equation is useful to avoid traders taking advantage of you.
 # 'Auto' causes a shift based on your buy:sell ratio.
 # ex: a 0.002 automatic shift with 75% sell side causes a 0.1% decrease in price
 # 'Manual' can be positive or negative
@@ -51,7 +51,7 @@ shift = {'auto':0.0,'manual':0.0}
 # Maximum volume (positive real), in NBT, of bid and ask orders. Ask is always NBT.
 # Use1: Multiple pools on a single exchange fighting over NBT.
 # Use2: Not putting all funds in an order at once. 1.5 minimum.
-fillfactor = {'bid':10000,'ask':10000}
+fillamount = {'bid':10000,'ask':10000}
 
 # Sets time (in hours) between bot resets. [bug fixer]
 reset_timer = 0.25

@@ -40,8 +40,8 @@ deviation = 0.0015
 offset = 0.0075
 
 # Changes the price orders get placed at with respect to the price feed.
-# AutoShift + ManualShift < Offset + Exchange Fee
-# ^ Very Important!!!! ^
+# AutoShift + Exchange Fee < Offset
+# The above equation is useful to avoid traders taking advantage of you.
 # 'Auto' causes a shift based on your buy:sell ratio.
 # ex: a 0.002 automatic shift with 75% sell side causes a 0.1% decrease in price
 # 'Manual' can be positive or negative

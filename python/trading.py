@@ -101,7 +101,7 @@ class NuBot(ConnectionThread):
 class PyBot(ConnectionThread):
     def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False,
                  deviation=0.0025, reset_timer=0, offset=0.002,
-		 shift={'auto':0,'manual':0}, fillfactor={'bid':10000,'ask':10000}):
+		 shift={'auto':0,'manual':0}, fillamount={'bid':10000,'ask':10000}):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
@@ -120,7 +120,7 @@ class PyBot(ConnectionThread):
  	self.shift = shift
 	self.placetimer = 0
 	self.placetimer2 = 0
-	self.fillfactor = fillfactor
+	self.fillamount = fillamount
         if not hasattr(PyBot, 'lock'):
             PyBot.lock = {}
         if not repr(exchange) in PyBot.lock:
@@ -184,28 +184,26 @@ class PyBot(ConnectionThread):
             exunit = self.unit
             prounit = 'nbt'
         order_response = self.conn.get(self.key, trials=1)
+	fullask = 0
+	fullbid = 0
         if 'error' in order_response:
             self.logger.error('unable to receive statistics for user %s: %s', self.key,
                                                       response['message'])
-            self.logger.info('Ignoring fillfactor')
+            self.logger.info('Ignoring fillamount')
             empty = 10000
-            fullask = 0
-            fullbid = 0
 	else:
-            fullask = 0
             if self.unit in order_response['units']:
                 for orders in order_response['units'][self.unit]['ask']:
                     fullask += orders['amount']
-            fullbid = 0
             if self.unit in order_response['units']:
                 for orders in order_response['units'][self.unit]['bid']:
                     fullbid += orders['amount']
         if side == 'ask':
-            empty = ast.literal_eval(self.fillfactor)['ask'] - fullask
+            empty = ast.literal_eval(self.fillamount)['ask'] - fullask
             if time.time() - self.placetimer < 105:
                 empty = 0
 	else:
-            empty = ast.literal_eval(self.fillfactor)['bid'] - fullbid
+            empty = ast.literal_eval(self.fillamount)['bid'] - fullbid
             if time.time() - self.placetimer2 < 105:
                 empty = 0
         shift = abs(ast.literal_eval(self.shift)['auto'])
