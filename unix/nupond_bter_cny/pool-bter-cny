@@ -51,7 +51,7 @@ shift = {'auto':0.005,'manual':0.0}
 # Maximum volume (positive real), in NBT, of bid and ask orders. Ask is always NBT.
 # Use1: Multiple pools on a single exchange fighting over NBT.
 # Use2: Not putting all funds in an order at once. 1.5 minimum.
-fillfactor = {'bid':10000,'ask':10000}
+fillamount = {'bid':10000,'ask':10000}
 
 # Sets time (in hours) between bot resets. [bug fixer]
 reset_timer = 0.25
