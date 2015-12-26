@@ -204,8 +204,8 @@ class PriceFeed():
           ret = json.loads(urllib2.urlopen(urllib2.Request('https://www.okcoin.cn/api/ticker.do'), timeout = 3).read())
           cnyprice = float(ret['ticker']['last'])
         except:
+	  self.logger.warning("unable to update BTC price from OKCoin")
           try: # BTCChina
-            self.logger.warning("unable to update BTC price from OKCoin")
             ret = json.loads(urllib2.urlopen(urllib2.Request('https://data.btcchina.com/data/ticker'), timeout = 3).read())
             cnyprice = float(ret['ticker']['last'])
           except:
@@ -214,17 +214,18 @@ class PriceFeed():
           self.feed['cny'][2] = cnyprice*usdprice
         else:
           self.logger.warning("unable to update CNY price from BTC feeds")
-          try: # yahoo
-            ret = json.loads(urllib2.urlopen(urllib2.Request('http://finance.yahoo.com/webservice/v1/symbols/allcurrencies/quote?format=json'), timeout = 3).read())
-            for res in ret['list']['resources']:
-              if res['resource']['fields']['name'] == 'USD/CNY':
-                self.feed['cny'][2] = float(res['resource']['fields']['price'])
-          except:
-            self.logger.warning("unable to update CNY price from yahoo")
-            try: # coindesk
-              ret = json.loads(urllib2.urlopen(urllib2.Request('https://api.coindesk.com/v1/bpi/currentprice/CNY.json'), timeout = 3).read())
-              self.feed['cny'][2] = ret['bpi']['CNY']['rate'] / ret['bpi']['USD']['rate']
-            except:
-              self.logger.error("unable to update price for CNY")
+          self.logger.error("unable to update price for CNY")
+#          try: # yahoo
+#            ret = json.loads(urllib2.urlopen(urllib2.Request('http://finance.yahoo.com/webservice/v1/symbols/allcurrencies/quote?format=json'), timeout = 3).read())
+#            for res in ret['list']['resources']:
+#              if res['resource']['fields']['name'] == 'USD/CNY':
+#                self.feed['cny'][2] = float(res['resource']['fields']['price'])
+#          except:
+#            self.logger.warning("unable to update CNY price from yahoo")
+#            try: # coindesk
+#              ret = json.loads(urllib2.urlopen(urllib2.Request('https://api.coindesk.com/v1/bpi/currentprice/CNY.json'), timeout = 3).read())
+#              self.feed['cny'][2] = ret['bpi']['CNY']['rate'] / ret['bpi']['USD']['rate']
+#            except:
+#              self.logger.error("unable to update price for CNY")
     self.feed[unit][1].release()
     return self.feed[unit][2]

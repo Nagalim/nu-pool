@@ -188,7 +188,7 @@ class PyBot(ConnectionThread):
 	fullbid = 0
         if 'error' in order_response:
             self.logger.error('unable to receive statistics for user %s: %s', self.key,
-                                                      response['message'])
+                                                      order_response['message'])
             self.logger.info('Ignoring fillamount')
             empty = 10000
 	else:
@@ -346,6 +346,7 @@ class PyBot(ConnectionThread):
         reset_time = curtime
         lastdev = {'bid': 1.0, 'ask': 1.0}
         delay = 0.0
+	maxamount = ast.literal_eval(self.fillamount)
         while self.active:
             if float(time.time()) - float(reset_time) > ((float(
                     self.reset_timer) * 60 + randint(0,9)) * 60) and float(self.reset_timer) > 0:
@@ -437,7 +438,8 @@ class PyBot(ConnectionThread):
                                                     self.limit[side] = funds
                                                 elif self.limit[side] < self.total[side] * deviation \
                                                         and effective_rate > self.requester.cost[side] \
-                                                        and contrib < self.target[side]:
+                                                        and contrib < self.target[side] \
+							and contrib < 0.9*maxamount[side]:
                                                     self.logger.info(
                                                         "increasing tier 1 %s limit of %s on %s from %.8f to %.8f",
                                                         side, self.unit, repr(self.exchange), self.total[side],
@@ -448,6 +450,7 @@ class PyBot(ConnectionThread):
                                                     and lastdev[side] < 0.01 \
                                                     and self.limit[side] < max(1.0, max(contrib * deviation, 0.5)) \
                                                     and contrib < self.target[side] \
+						    and contrib < 0.9*maxamount[side] \
                                                     and effective_rate >= self.requester.cost[side]:
                                                 self.limit[side] = max(1.0, max(contrib * deviation, 0.5))
                                                 self.logger.info(

@@ -285,8 +285,6 @@ class Client(ConnectionThread):
                                                 self.users[user][unit]['request'].sampling = self.users[user][unit][
                                                                                                  'request'].sampling + 1
                                                 self.logger.warning('increasing sampling to %d',
-                                                                    unit,
-                                                                    repr(self.users[user][unit]['request'].exchange),
                                                                     self.users[user][unit]['request'].sampling)
                                     if response['units'][unit]['missing'] / float(self.basestatus[
                                         'sampling']) >= 0.05:  # look for missing error and adjust sampling
