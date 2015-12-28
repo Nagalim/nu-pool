@@ -10,29 +10,28 @@
 ### REQUIRED PARAMETERS ###
 
 # NuBits payout address
-address = xxxxxx
+address = xxxxxxx
 
 # API key from the exchange
-apikey = xxxxx
+apikey = xxxxxxx
 
 # API secret from the exchange
-apisecret = xxxxx
+apisecret = xxxxxxx
 
 
 
 ### OPTIONAL PARAMETERS ###
 
 # interest: minimal interest rate at which you want to get payouts in percent (0.25% = 0.25).
-# Set to 0 for pool maximum. You can specify two interest rates for the bid and ask side 
+# Set to 0.01 for pool maximum. You can specify two interest rates for the bid and ask side 
 # by separating them with a comma, e.g. 0.25,0.1
 interest = 0.01
 
 # ordermatch: place orders even if they would match with an existing order
-# set this value only to True if you know what you are doing.
 ordermatch = True
 
- # Determines window of allowed price deviation.
-# 0.0025 for crypto, 0.0015 for fiat, 0.0005 for USD
+# Determines window of allowed price deviation.
+# 0.005 for alts/CNY, 0.0025 for crypto, 0.0015 for fiat, 0.0005 for USD
 deviation = 0.005
 
 # How far away from price to place orders. ex: 0.002 is 0.2%, or 0.4% spread
@@ -60,6 +59,6 @@ reset_timer = 0.5
 
 ### GENERAL OPERATION PARAMETERS - DO NOT CHANGE ###
 
-server=nupond.net:3336
+server=nupond.net:3333
 unit=cny
 exchange=bter
