@@ -62,7 +62,7 @@ reset_timer = 0.25
 
 ### GENERAL OPERATION PARAMETERS - DO NOT CHANGE ###
 
-server=104.236.240.216:3335
+server=nupond.net:3335
 unit=cny
 exchange=bter
 skew=-0.015
