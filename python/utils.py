@@ -145,7 +145,7 @@ class PriceFeed():
     self.feed = { x : [0, threading.Lock(), 0.0] for x in [ 'btc', 'eur', 'cny' ] }
     self.logger = logger if logger else logging.getLogger('null')
 
-  def price(self, unit, force = False):
+  def price(self, unit, skew, force = False):
     if unit == 'usd' or unit == 'nbt': return 1.0 #AlwaysADollar
     if not unit in self.feed: return None
     self.feed[unit][1].acquire()
@@ -211,7 +211,7 @@ class PriceFeed():
           except:
             self.logger.error("unable to update price for BTC/CNY")
         if usdprice != 0 and cnyprice != 0:
-          self.feed['cny'][2] = cnyprice*usdprice
+          self.feed['cny'][2] = cnyprice*usdprice*(1+skew)
         else:
           self.logger.warning("unable to update CNY price from BTC feeds")
           self.logger.error("unable to update price for CNY")

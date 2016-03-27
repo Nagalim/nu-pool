@@ -3,7 +3,7 @@
 client=../../python/client.py
 
 config=`mktemp`
-options=`getopt -o x:a:k:s:i:ou:e:d:f:r:m:t: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,restart_timer:,fillamount:,trading: -- "$@"`
+options=`getopt -o x:a:k:s:i:ou:e:d:f:r:m:t:w: --long server:,address:,key:,secret:,interest:,ordermatch,unit:,exchange:,deviation:,offset:,restart_timer:,fillamount:,skew:,trading: -- "$@"`
 eval set -- "$options"
 
 if [ -e pool-bter-cny ];then
@@ -25,6 +25,7 @@ while [ $# -gt 0 ]; do
   -f|--offset) echo "offset=$2";shift;;
   -r|--restart_timer) echo "restart_imer=$2";shift;;
   -m|--fillamount) echo "fillamount=$2";shift;;
+  -w|--skew) echo "skew=$2";shift;;
   (--) shift; break;;
   (-*) break;;
   (*) break;;

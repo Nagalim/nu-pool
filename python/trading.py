@@ -101,7 +101,7 @@ class NuBot(ConnectionThread):
 class PyBot(ConnectionThread):
     def __init__(self, conn, requester, key, secret, exchange, unit, target, logger=None, ordermatch=False,
                  deviation=0.0025, reset_timer=0, offset=0.002,
-		 shift={'auto':0,'manual':0}, fillamount={'bid':10000,'ask':10000}):
+		 shift={'auto':0,'manual':0}, fillamount={'bid':10000,'ask':10000},skew=0.0):
         super(PyBot, self).__init__(conn, logger)
         self.requester = requester
         self.ordermatch = ordermatch
@@ -121,6 +121,7 @@ class PyBot(ConnectionThread):
 	self.placetimer = 0
 	self.placetimer2 = 0
 	self.fillamount = fillamount
+	self.skew = skew
         if not hasattr(PyBot, 'lock'):
             PyBot.lock = {}
         if not repr(exchange) in PyBot.lock:
@@ -385,7 +386,7 @@ class PyBot(ConnectionThread):
                     response = self.conn.get('price/' + self.unit, trials=3, timeout=10)
                     if 'error' not in response:
                         self.serverprice = response['price']
-                        userprice = PyBot.pricefeed.price(self.unit)
+                        userprice = PyBot.pricefeed.price(self.unit,float(self.skew))
                         if 1.0 - min(self.serverprice, userprice) / max(self.serverprice,
                                                                         userprice) > 0.005:  # validate server price
                             self.logger.error(

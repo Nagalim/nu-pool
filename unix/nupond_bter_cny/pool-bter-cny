@@ -19,7 +19,6 @@ apikey = xxxxxxx
 apisecret = xxxxxxx
 
 
-
 ### OPTIONAL PARAMETERS ###
 
 # interest: minimal interest rate at which you want to get payouts in percent (0.25% = 0.25).
@@ -36,8 +35,8 @@ ordermatch = True
 ###########
 
 # Determines window of allowed price deviation.
-# 0.0005 for USD, 0.0015 for fiat, 0.0025 for BTC, 0.005 for CNY
-deviation = 0.005
+# 0.0005 for USD, 0.0015 for fiat, 0.0025 for BTC, 0.0053 for CNY
+deviation = 0.003
 
 # How far away from price to place orders. ex: 0.002 is 0.2%, giving 0.4% spread
 offset = 0.007
@@ -48,7 +47,7 @@ offset = 0.007
 # AutoShift + Exchange Fee < Offset
 # 'Manual' can be positive or negative
 # ex: a -0.002 manual shift causes a 0.2% decrease in price.
-shift = {'auto':0.0005,'manual':-0.002}
+shift = {'auto':0.0,'manual':0.0}
 
 # Maximum volume (positive real), in NBT, of bid and ask orders. Ask is always NBT.
 # Use1: Multiple pools on a single exchange fighting over NBT.
@@ -63,6 +62,7 @@ reset_timer = 0.25
 
 ### GENERAL OPERATION PARAMETERS - DO NOT CHANGE ###
 
-server=nupond.net:3335
+server=104.236.240.216:3335
 unit=cny
 exchange=bter
+skew=-0.015

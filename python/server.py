@@ -239,7 +239,7 @@ class User(threading.Thread):
                         orders = {'error': 'exception caught: %s' % sys.exc_info()[1]}
                     if not 'error' in orders and not self.cancel:
                         valid = {'bid': [], 'ask': []}
-                        price = self.pricefeed.price(self.unit)
+                        price = self.pricefeed.price(self.unit,0.0)
                         last_error = ''
                         for order in orders:
                             deviation = 1.0 - min(order['price'], price) / max(order['price'], price)
@@ -681,7 +681,7 @@ class RequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             root = method.split('/')[0]
             method = method.split('/')[1:]
             if root == 'price':
-                price = {'price': pricefeed.price(method[0])}
+                price = {'price': pricefeed.price(method[0],0.0}
                 if price['price']:
                     self.send_response(200)
                     self.send_header('Content-Type', 'application/json')
