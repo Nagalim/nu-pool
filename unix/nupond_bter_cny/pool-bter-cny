@@ -65,4 +65,4 @@ reset_timer = 0.25
 server=nupond.net:3335
 unit=cny
 exchange=bter
-skew=-0.015
+skew=0
